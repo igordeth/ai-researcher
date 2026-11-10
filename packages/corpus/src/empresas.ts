@@ -8,7 +8,10 @@ const EMPRESAS_CSV = path.join(HERE, '../data/empresas.csv');
 
 export function lerEmpresas(csvPath: string = EMPRESAS_CSV): Empresa[] {
   const conteudo = readFileSync(csvPath, 'utf-8');
-  const [linhaHeader, ...linhas] = conteudo.trim().split('\n');
+  // \r?\n e não só \n: no Windows, com core.autocrlf=true, o Git entrega o CSV com CRLF.
+  // Separando só por \n, o \r grudava no último campo — o cabeçalho virava "setor\r",
+  // registro.setor ficava undefined e o JSON.stringify sumia com o campo sem avisar.
+  const [linhaHeader, ...linhas] = conteudo.trim().split(/\r?\n/);
   const header = linhaHeader.split(',');
 
   return linhas
