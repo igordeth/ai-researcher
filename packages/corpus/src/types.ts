@@ -38,22 +38,28 @@ export interface PeriodoColetado {
   receitaMesmoTrimestreAnoAnterior?: ValorConta;
 }
 
+/**
+ * O documento que vai para data/documentos/{TICKER}.json — o contrato do corpus com o resto do
+ * projeto (seed, banco, evals). Por isso os campos estão em snake_case, com os mesmos nomes do
+ * CLAUDE.md e das colunas do banco. Os tipos acima são internos à coleta e seguem camelCase;
+ * a tradução de um para o outro acontece num lugar só: `paraCanonico`.
+ */
 export interface IndicadorTrimestral {
   ticker: string;
-  companyName: string;
+  company_name: string;
   setor: string;
   period: string;
-  periodEnd: string;
-  receitaLiquida: number;
-  lucroBruto: number;
-  lucroLiquido: number;
-  ativoTotal: number;
-  patrimonioLiquido: number;
-  caixaOperacional: number;
-  sourceUrl: string;
-  fetchedAt: string;
+  period_end: string;
+  receita_liquida: number;
+  lucro_bruto: number;
+  lucro_liquido: number;
+  ativo_total: number;
+  patrimonio_liquido: number;
+  caixa_operacional: number;
+  source_url: string;
+  fetched_at: string;
   /** YoY — já convertido para reais. Ausente quando a CVM não oferece o comparativo (4º trimestre). */
-  receitaMesmoTrimestreAnoAnterior?: number;
+  receita_mesmo_trimestre_ano_anterior?: number;
 }
 
 export interface DocumentoFinal extends IndicadorTrimestral {

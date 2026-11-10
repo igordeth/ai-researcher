@@ -22,12 +22,12 @@ function agruparPorTicker(periodos: PeriodoColetado[]): Map<string, PeriodoColet
 
 /** Liga cada trimestre ao imediatamente anterior da mesma janela (para a comparação QoQ) e gera o parágrafo. */
 function montarDocumentos(indicadores: IndicadorTrimestral[]): DocumentoFinal[] {
-  const ordenados = [...indicadores].sort((a, b) => a.periodEnd.localeCompare(b.periodEnd));
+  const ordenados = [...indicadores].sort((a, b) => a.period_end.localeCompare(b.period_end));
 
   return ordenados.map((indicador, i) => {
     const anterior = ordenados[i - 1];
     const comparacoes = anterior
-      ? { trimestreAnterior: { valor: anterior.receitaLiquida, period: anterior.period } }
+      ? { trimestreAnterior: { valor: anterior.receita_liquida, period: anterior.period } }
       : {};
     return { ...indicador, paragraph: gerarParagrafo(indicador, comparacoes) };
   });

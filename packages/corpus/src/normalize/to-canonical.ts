@@ -12,21 +12,22 @@ export function paraCanonico(
 ): IndicadorTrimestral {
   const { indicadores } = periodo;
 
+  // A fronteira entre os tipos internos da coleta (camelCase) e o documento gravado (snake_case).
   return {
     ticker: periodo.empresa.ticker,
-    companyName: periodo.empresa.razaoSocial,
+    company_name: periodo.empresa.razaoSocial,
     setor: periodo.empresa.setor,
     period: periodo.period,
-    periodEnd: periodo.periodEnd,
-    receitaLiquida: paraReais(indicadores.receitaLiquida),
-    lucroBruto: paraReais(indicadores.lucroBruto),
-    lucroLiquido: paraReais(indicadores.lucroLiquido),
-    ativoTotal: paraReais(indicadores.ativoTotal),
-    patrimonioLiquido: paraReais(indicadores.patrimonioLiquido),
-    caixaOperacional: paraReais(indicadores.caixaOperacional),
-    sourceUrl: periodo.sourceUrl,
-    fetchedAt,
-    receitaMesmoTrimestreAnoAnterior: periodo.receitaMesmoTrimestreAnoAnterior
+    period_end: periodo.periodEnd,
+    receita_liquida: paraReais(indicadores.receitaLiquida),
+    lucro_bruto: paraReais(indicadores.lucroBruto),
+    lucro_liquido: paraReais(indicadores.lucroLiquido),
+    ativo_total: paraReais(indicadores.ativoTotal),
+    patrimonio_liquido: paraReais(indicadores.patrimonioLiquido),
+    caixa_operacional: paraReais(indicadores.caixaOperacional),
+    source_url: periodo.sourceUrl,
+    fetched_at: fetchedAt,
+    receita_mesmo_trimestre_ano_anterior: periodo.receitaMesmoTrimestreAnoAnterior
       ? paraReais(periodo.receitaMesmoTrimestreAnoAnterior)
       : undefined,
   };

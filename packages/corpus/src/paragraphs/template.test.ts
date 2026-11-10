@@ -5,19 +5,19 @@ import type { IndicadorTrimestral } from '../types.js';
 function indicadorBase(): IndicadorTrimestral {
   return {
     ticker: 'VALE',
-    companyName: 'Vale S.A.',
+    company_name: 'Vale S.A.',
     setor: 'Extração Mineral',
     period: '3T25',
-    periodEnd: '2025-09-30',
-    receitaLiquida: 56_701_000_000,
-    lucroBruto: 20_624_000_000,
-    lucroLiquido: 14_671_000_000,
-    ativoTotal: 484_953_000_000,
-    patrimonioLiquido: 224_733_000_000,
-    caixaOperacional: 8_500_000_000,
-    sourceUrl: 'https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip',
-    fetchedAt: '2026-08-07T00:00:00.000Z',
-    receitaMesmoTrimestreAnoAnterior: 50_000_000_000,
+    period_end: '2025-09-30',
+    receita_liquida: 56_701_000_000,
+    lucro_bruto: 20_624_000_000,
+    lucro_liquido: 14_671_000_000,
+    ativo_total: 484_953_000_000,
+    patrimonio_liquido: 224_733_000_000,
+    caixa_operacional: 8_500_000_000,
+    source_url: 'https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip',
+    fetched_at: '2026-08-07T00:00:00.000Z',
+    receita_mesmo_trimestre_ano_anterior: 50_000_000_000,
   };
 }
 
@@ -40,7 +40,7 @@ describe('gerarParagrafo', () => {
 
   it('omite a cláusula YoY quando a CVM não oferece o comparativo (caso do 4º trimestre)', () => {
     const indicador = indicadorBase();
-    indicador.receitaMesmoTrimestreAnoAnterior = undefined;
+    indicador.receita_mesmo_trimestre_ano_anterior = undefined;
 
     const paragrafo = gerarParagrafo(indicador, {
       trimestreAnterior: { valor: 60_000_000_000, period: '2T25' },
@@ -63,7 +63,7 @@ describe('gerarParagrafo', () => {
 
   it('não escreve vírgula nem cláusula nenhuma quando as duas comparações estão ausentes', () => {
     const indicador = indicadorBase();
-    indicador.receitaMesmoTrimestreAnoAnterior = undefined;
+    indicador.receita_mesmo_trimestre_ano_anterior = undefined;
 
     const paragrafo = gerarParagrafo(indicador);
 
@@ -76,7 +76,7 @@ describe('gerarParagrafo', () => {
 
   it('usa milhões quando o valor fica abaixo de 1 bilhão', () => {
     const indicador = indicadorBase();
-    indicador.caixaOperacional = 340_200_000;
+    indicador.caixa_operacional = 340_200_000;
 
     const paragrafo = gerarParagrafo(indicador);
 

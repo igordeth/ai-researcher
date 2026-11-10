@@ -51,10 +51,10 @@ export function gerarParagrafo(
 ): string {
   const clausulas: string[] = [];
 
-  if (indicador.receitaMesmoTrimestreAnoAnterior !== undefined) {
+  if (indicador.receita_mesmo_trimestre_ano_anterior !== undefined) {
     const delta = variacaoPercentual(
-      indicador.receitaLiquida,
-      indicador.receitaMesmoTrimestreAnoAnterior,
+      indicador.receita_liquida,
+      indicador.receita_mesmo_trimestre_ano_anterior,
     );
     clausulas.push(
       `${direcao(delta)} de ${formatarPercentual(delta)} frente ao ${periodoAnoAnterior(indicador.period)}`,
@@ -62,20 +62,20 @@ export function gerarParagrafo(
   }
 
   if (comparacoes.trimestreAnterior) {
-    const delta = variacaoPercentual(indicador.receitaLiquida, comparacoes.trimestreAnterior.valor);
+    const delta = variacaoPercentual(indicador.receita_liquida, comparacoes.trimestreAnterior.valor);
     clausulas.push(
       `${direcao(delta)} de ${formatarPercentual(delta)} frente ao ${comparacoes.trimestreAnterior.period}`,
     );
   }
 
   const sufixoReceita = clausulas.length > 0 ? `, ${clausulas.join(' e ')}` : '';
-  const margemLiquida = (indicador.lucroLiquido / indicador.receitaLiquida) * 100;
+  const margemLiquida = (indicador.lucro_liquido / indicador.receita_liquida) * 100;
 
   return (
-    `No ${indicador.period}, a ${indicador.companyName} reportou receita líquida de ` +
-    `${formatarMoeda(indicador.receitaLiquida)}${sufixoReceita}. ` +
-    `O lucro líquido foi de ${formatarMoeda(indicador.lucroLiquido)}, com margem líquida de ` +
+    `No ${indicador.period}, a ${indicador.company_name} reportou receita líquida de ` +
+    `${formatarMoeda(indicador.receita_liquida)}${sufixoReceita}. ` +
+    `O lucro líquido foi de ${formatarMoeda(indicador.lucro_liquido)}, com margem líquida de ` +
     `${FORMATADOR_UMA_CASA.format(margemLiquida)}%. ` +
-    `O caixa gerado nas operações somou ${formatarMoeda(indicador.caixaOperacional)}.`
+    `O caixa gerado nas operações somou ${formatarMoeda(indicador.caixa_operacional)}.`
   );
 }
