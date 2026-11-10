@@ -9,30 +9,30 @@
     "id": "A02",
     "grupo": "A",
     "pergunta": "Qual foi o lucro líquido do Itaú Unibanco no último trimestre disponível?",
-    "resposta_esperada": "R$ 11,9 bilhões no 1T26 (encerrado em 2026-03-31)."
+    "resposta_esperada": "R$ 12,3 bilhões no 2T26 (encerrado em 2026-06-30)."
   },
   {
     "id": "A03",
     "grupo": "A",
-    "pergunta": "Compare a receita líquida da Petrobras e da Vale no trimestre mais recente.",
+    "pergunta": "Compare a receita líquida da Petrobras e da Vale no 1T26.",
     "resposta_esperada": "Petrobras teve receita líquida de R$ 123,7 bilhões no 1T26, contra R$ 48,7 bilhões da Vale no mesmo período — a Petrobras faturou cerca de 2,5x mais."
   },
   {
     "id": "A04",
     "grupo": "A",
-    "pergunta": "A receita da Vale subiu ou caiu do 2T25 para o 3T25?",
-    "resposta_esperada": "Subiu — alta de 13,8%, de R$ 49,8 bilhões (2T25) para R$ 56,7 bilhões (3T25)."
+    "pergunta": "A receita da Vale subiu ou caiu do 3T25 para o 4T25?",
+    "resposta_esperada": "Subiu — alta de 5,2%, de R$ 56,7 bilhões (3T25) para R$ 59,7 bilhões (4T25)."
   },
   {
     "id": "A05",
     "grupo": "A",
-    "pergunta": "Qual o patrimônio líquido do Banco do Brasil no trimestre mais recente?",
+    "pergunta": "Qual o patrimônio líquido do Banco do Brasil no 1T26?",
     "resposta_esperada": "R$ 196,9 bilhões no 1T26."
   },
   {
     "id": "A06",
     "grupo": "A",
-    "pergunta": "A Suzano teve lucro ou prejuízo no último trimestre?",
+    "pergunta": "A Suzano teve lucro ou prejuízo no 1T26?",
     "resposta_esperada": "Lucro líquido de R$ 4,3 bilhões no 1T26."
   },
   {
@@ -44,19 +44,19 @@
   {
     "id": "A08",
     "grupo": "A",
-    "pergunta": "Qual foi o caixa gerado nas operações pela Ambev no trimestre mais recente?",
+    "pergunta": "Qual foi o caixa gerado nas operações pela Ambev no 1T26?",
     "resposta_esperada": "R$ 3,2 bilhões no 1T26."
   },
   {
     "id": "A09",
     "grupo": "A",
-    "pergunta": "A Magazine Luiza teve lucro líquido positivo no último trimestre?",
+    "pergunta": "A Magazine Luiza teve lucro líquido positivo no 1T26?",
     "resposta_esperada": "Não — prejuízo líquido de aproximadamente R$ 0,1 bilhão (R$ -60 milhões) no 1T26."
   },
   {
     "id": "A10",
     "grupo": "A",
-    "pergunta": "Qual o ativo total do Itaú Unibanco no trimestre mais recente?",
+    "pergunta": "Qual o ativo total do Itaú Unibanco no 1T26?",
     "resposta_esperada": "R$ 3.171,2 bilhões (~R$ 3,2 trilhões) no 1T26."
   },
   {
