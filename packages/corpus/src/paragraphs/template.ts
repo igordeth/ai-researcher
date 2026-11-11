@@ -62,7 +62,10 @@ export function gerarParagrafo(
   }
 
   if (comparacoes.trimestreAnterior) {
-    const delta = variacaoPercentual(indicador.receita_liquida, comparacoes.trimestreAnterior.valor);
+    const delta = variacaoPercentual(
+      indicador.receita_liquida,
+      comparacoes.trimestreAnterior.valor,
+    );
     clausulas.push(
       `${direcao(delta)} de ${formatarPercentual(delta)} frente ao ${comparacoes.trimestreAnterior.period}`,
     );
