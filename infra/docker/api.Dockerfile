@@ -5,7 +5,9 @@ RUN corepack enable
 FROM base AS pruner
 WORKDIR /app
 COPY . .
-RUN npx turbo prune @hero/api --docker
+# Versão fixa e igual à do package.json da raiz: o node_modules fica fora do contexto
+# (.dockerignore), e sem versão o npx baixaria o turbo mais recente.
+RUN npx turbo@2.10.9 prune @hero/api --docker
 
 FROM base AS installer
 WORKDIR /app

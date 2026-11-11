@@ -1,0 +1,18 @@
+# O primeiro estágio dos Dockerfiles faz `COPY . .` da raiz do monorepo. Tudo que não está
+# listado aqui entra no contexto do build.
+
+# Dependências e artefatos da máquina de quem builda. O node_modules instalado no Windows ou
+# no macOS tem binários de outra plataforma e quebra o `turbo` dentro do Alpine. As imagens
+# instalam as próprias dependências a partir do lockfile.
+**/node_modules
+**/dist
+**/.turbo
+**/.angular
+**/.cache
+
+# Segredos locais nunca entram numa imagem. O .env.example pode entrar: não tem nada sensível.
+.env
+.env.*
+!.env.example
+
+.git
