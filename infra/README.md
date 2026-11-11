@@ -4,6 +4,29 @@ Recursos GCP provisionados no Bloco A, fora do controle de versão (não há Ter
 
 **`ai-researcher-capstone` nas tabelas abaixo é o projeto da instância de referência do curso — troque pelo id do seu próprio projeto em todo lugar.** Nenhum nome de recurso (`ai-researcher-db`, repo `ai-researcher`, service account `github-actions-deployer`, etc.) precisa mudar — são convenções deste projeto, não específicas de uma conta. Só o **project id**, o **número do projeto** (usado no caminho do Workload Identity Provider) e a **billing account** são específicos da sua conta. Ver "Configuração do GitHub Actions" abaixo pra saber onde esses três valores entram — nenhum é hardcoded em `deploy.yml`.
 
+### Esta instância: `ai-wise-researcher`
+
+Este repositório roda no projeto GCP **`ai-wise-researcher`**, e não no `ai-researcher-capstone` da referência. Project id é único no mundo inteiro: `ai-researcher` já estava em uso, por isso o nome próprio. As tabelas abaixo continuam com `ai-researcher-capstone` de propósito, para bater com o material das aulas. Ao reproduzir um comando daqui, troque `ai-researcher-capstone` por `ai-wise-researcher`.
+
+O que já foi provisionado nesta instância (Aula 6, em 2026-11-11):
+
+- Projeto `ai-wise-researcher` criado e vinculado à billing account.
+- APIs habilitadas: Cloud Run, Cloud SQL Admin, Artifact Registry, Secret Manager e IAM Credentials. A do Vertex AI (`aiplatform.googleapis.com`) entra na Aula 8, junto com o seed.
+- Artifact Registry: repo Docker `ai-researcher` em `us-central1` (`us-central1-docker.pkg.dev/ai-wise-researcher/ai-researcher`).
+- Cloud SQL: instância `ai-researcher-db` (Postgres 16.15, `db-f1-micro`, edição Enterprise, zonal em `us-central1-f`, sem backup, IP público). Banco `ai_researcher` com a extensão `vector` habilitada. Aqui a versão é **0.8.5**; a referência tem 0.8.1, porque o Cloud SQL entrega a versão corrente na hora do `CREATE EXTENSION`.
+- Usuário `app_user`, com senha aleatória gerada por `openssl rand -hex 32`. A senha nunca foi impressa nem gravada em disco: foi direto para o secret `database-url` (versão 2, formato socket `/cloudsql/...`). A versão 1 está desabilitada, porque a senha dela apareceu num log de erro durante o provisionamento e foi rotacionada na hora.
+- O `CREATE EXTENSION` rodou pelo Cloud SQL Auth Proxy (componente `cloud-sql-proxy` do gcloud, com `--gcloud-auth`).
+- APIs extras exigidas pelo WIF: `iam`, `sts` e `cloudresourcemanager`. Elas não vêm habilitadas por dependência em projeto novo.
+- Workload Identity Federation: pool `github-actions-pool` e provider OIDC `github-actions-provider`, restrito a **`igordeth/ai-researcher`**, o fork desta instância, e não ao repositório do curso. Se o provider aceitasse o repositório do curso, os workflows de lá poderiam assumir a service account de deploy deste projeto, e os deste fork não conseguiriam se autenticar. Restrinja sempre ao repositório onde o seu Actions roda.
+- Service account `github-actions-deployer@ai-wise-researcher.iam.gserviceaccount.com`, com as 7 roles da tabela. `roles/iam.workloadIdentityUser` concedido ao principalSet `attribute.repository/igordeth/ai-researcher`.
+- Firebase adicionado pelo console ao projeto GCP existente, com o Google Analytics ativado (o código não usa). O site padrão do Hosting é `ai-wise-researcher.web.app`. O `.firebaserc` aponta para `ai-wise-researcher`. Não rodei o `firebase init hosting`, porque ele oferece sobrescrever o `firebase.json` versionado, que tem o rewrite `/api/**` para o Cloud Run.
+- Variáveis do GitHub (`GCP_PROJECT_ID`, `GCP_WIF_PROVIDER`, `GCP_DEPLOY_SERVICE_ACCOUNT`) criadas em `igordeth/ai-researcher` com `gh variable set`.
+- `roles/secretmanager.secretAccessor` no secret `database-url` concedido à service account de execução do Cloud Run (`595752602813-compute@developer.gserviceaccount.com`) **antes** do primeiro deploy. É o problema 2 do Bloco C abaixo, resolvido de antemão.
+- `docker compose build` no Windows teve dois problemas. Os dois foram resolvidos:
+  1. O compose v5 usa o bake do buildx e travava em `additional privileges requested: pass "--allow=fs.read=infra\\docker\\..."`, um problema de barra invertida no caminho. O comando saía com código 0 sem construir nada. Corrigido com a variável de usuário `BUILDX_BAKE_ENTITLEMENTS_FS=0`. O `COMPOSE_BAKE=false` não resolve: é ignorado nesta versão.
+  2. O `COPY . .` levava o `node_modules` do host para o container, e o `npx turbo prune` quebrava no Alpine (`MODULE_NOT_FOUND`). Corrigido com o `.dockerignore` na raiz e com `turbo@2.10.9` fixo nos Dockerfiles. No CI (Linux) o problema não aparecia.
+- Provider para a variável `GCP_WIF_PROVIDER`: `projects/595752602813/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider`.
+
 ## Recursos criados
 
 | Recurso | Valor |
