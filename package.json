@@ -14,6 +14,7 @@
     "test": "turbo run test",
     "lint": "turbo run lint && prettier --check .",
     "collect": "pnpm --filter @hero/corpus run collect",
+    "seed": "pnpm --filter @hero/agent run seed",
     "capstone:check": "tsx scripts/capstone-check.ts"
   },
   "devDependencies": {

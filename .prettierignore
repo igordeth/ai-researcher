@@ -7,3 +7,7 @@ pnpm-lock.yaml
 
 # Prosa: markdown didático e documentação, não é escopo do Prettier
 **/*.md
+
+# Gerado pelo drizzle-kit, que reescreve o _journal.json e cria um snapshot novo a cada
+# `db:generate`. Formatar à mão seria desfeito na próxima migration.
+**/migrations/meta
