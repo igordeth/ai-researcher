@@ -8,7 +8,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - '5432:5432'
+      # 5434 na sua máquina, e não 5432: é comum já haver outro Postgres local na 5432 (de outro
+      # projeto), e o Docker então sobe este container sem porta, em silêncio. Dentro da rede do
+      # Docker a porta continua 5432 (ver o DATABASE_URL do serviço api abaixo).
+      - '5434:5432'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 2s
