@@ -44,6 +44,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@hero/agent':
+        specifier: workspace:*
+        version: link:../../packages/agent
       '@hero/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
