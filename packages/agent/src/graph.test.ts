@@ -40,6 +40,9 @@ function depsFake(respostasDoGrade: { sufficient: boolean; missingAspects: strin
     },
     buscar: async (): Promise<RetrievedDoc[]> => [documentoCvm, ...gravados],
     gradeLlm: { withStructuredOutput: () => ({ invoke: gradeInvoke }) },
+    answerLlm: {
+      invoke: async () => ({ text: 'A receita da Vale foi de R$ 56,7 bilhões [VALE3 3T25].' }),
+    },
     searchProvider: {
       search: vi.fn(async () => [
         { title: 'Notícia', snippet: '', url: 'https://noticias.com/vale' },
@@ -84,10 +87,10 @@ async function nosVisitados(deps: GraphDeps): Promise<string[]> {
 }
 
 describe('buildGraph', () => {
-  it('vai direto ao fim quando o grade considera suficiente na primeira rodada', async () => {
+  it('vai direto ao answer quando o grade considera suficiente na primeira rodada', async () => {
     const { deps, gradeInvoke } = depsFake([SUFICIENTE]);
 
-    expect(await nosVisitados(deps)).toEqual(['retrieve', 'grade']);
+    expect(await nosVisitados(deps)).toEqual(['retrieve', 'grade', 'answer']);
     expect(gradeInvoke).toHaveBeenCalledTimes(1);
     expect(deps.searchProvider.search).not.toHaveBeenCalled();
   });
@@ -101,6 +104,7 @@ describe('buildGraph', () => {
       'webSearch',
       'retrieve',
       'grade',
+      'answer',
     ]);
     // O webSearch pesquisou o aspecto que o grade apontou em falta.
     expect(deps.searchProvider.search).toHaveBeenCalledWith(
@@ -118,8 +122,8 @@ describe('buildGraph', () => {
 
     expect(nos.filter((no) => no === 'grade')).toHaveLength(MAX_ITERATIONS);
     expect(gradeInvoke).toHaveBeenCalledTimes(MAX_ITERATIONS);
-    // Termina no grade, sem uma ida à web a mais depois da última avaliação.
-    expect(nos.at(-1)).toBe('grade');
+    // Depois da última avaliação vai direto ao answer, sem uma ida à web a mais.
+    expect(nos.slice(-2)).toEqual(['grade', 'answer']);
     expect(nos.filter((no) => no === 'webSearch')).toHaveLength(MAX_ITERATIONS - 1);
   });
 
@@ -131,5 +135,16 @@ describe('buildGraph', () => {
     expect(estadoFinal.iterations).toBe(MAX_ITERATIONS);
     expect(estadoFinal.sufficient).toBe(false);
     expect(estadoFinal.missingAspects).toEqual(['motivo da queda']);
+  });
+
+  it('entrega no estado final a resposta do answer, com o bloco de fontes', async () => {
+    const { deps } = depsFake([SUFICIENTE]);
+
+    const estadoFinal = await buildGraph(deps).invoke({ question: 'Qual a receita da Vale?' });
+
+    expect(estadoFinal.finalAnswer).toContain('R$ 56,7 bilhões [VALE3 3T25]');
+    expect(estadoFinal.finalAnswer).toContain(
+      'Fontes:\n- [VALE3 3T25] Vale S.A., data-base 30/09/2025',
+    );
   });
 });

@@ -1,6 +1,7 @@
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 
 import type { RetrievedDoc } from './db/retrieve-similar.js';
+import { makeAnswerNode, type AnswerLlm } from './nodes/answer.js';
 import { makeGradeNode, type GradeLlm } from './nodes/grade.js';
 import { makeRetrieveNode, type Buscar, type EmbeddingsClient } from './nodes/retrieve.js';
 import {
@@ -41,6 +42,12 @@ export const ResearchState = Annotation.Root({
     reducer: (anterior, incremento) => anterior + incremento,
     default: () => 0,
   }),
+  // A resposta final, já filtrada e com as fontes. Só o nó answer escreve; quem chama o grafo lê.
+  // Não se chama `answer` porque o LangGraph não deixa um campo do estado ter o nome de um nó.
+  finalAnswer: Annotation<string>({
+    reducer: (_anterior, novo) => novo,
+    default: () => '',
+  }),
 });
 
 export type ResearchStateValue = typeof ResearchState.State;
@@ -56,6 +63,8 @@ export interface GraphDeps {
   embeddings: EmbeddingsClient & EmbeddingsEmLote;
   buscar: Buscar;
   gradeLlm: GradeLlm;
+  // Cliente próprio, e não o do grade: cada nó tem o seu modelo (MODEL_GRADE, MODEL_ANSWER).
+  answerLlm: AnswerLlm;
   searchProvider: SearchProvider;
   buscarPagina: BuscarPagina;
   gravarPagina: GravarPagina;
@@ -63,19 +72,19 @@ export interface GraphDeps {
 
 /**
  * A decisão de rota depois do `grade`. Só lê o que o `grade` já produziu: não reavalia nada.
- * Atingir o limite não é erro. Quando o nó `answer` existir, os dois `END` passam a `answer`, e a
- * resposta avisa que o contexto é parcial.
+ * Atingir o limite não é erro: vai para o `answer` com `sufficient` falso, e a resposta avisa que o
+ * contexto é parcial.
  */
-export function decidirDepoisDoGrade(state: ResearchStateValue): 'webSearch' | typeof END {
-  if (state.sufficient) return END;
-  if (state.iterations >= MAX_ITERATIONS) return END;
+export function decidirDepoisDoGrade(state: ResearchStateValue): 'answer' | 'webSearch' {
+  if (state.sufficient) return 'answer';
+  if (state.iterations >= MAX_ITERATIONS) return 'answer';
   return 'webSearch';
 }
 
 /**
  * Monta e compila o grafo:
  *
- *   START → retrieve → grade ─┬─ suficiente, ou limite atingido → END
+ *   START → retrieve → grade ─┬─ suficiente, ou limite atingido → answer → END
  *                             └─ insuficiente → webSearch → retrieve
  *
  * O webSearch não passa documentos ao retrieve pelo estado: grava-os na base, e o retrieve
@@ -94,9 +103,11 @@ export function buildGraph(deps: GraphDeps) {
         gravarPagina: deps.gravarPagina,
       }),
     )
+    .addNode('answer', makeAnswerNode(deps.answerLlm))
     .addEdge(START, 'retrieve')
     .addEdge('retrieve', 'grade')
-    .addConditionalEdges('grade', decidirDepoisDoGrade, ['webSearch', END])
+    .addConditionalEdges('grade', decidirDepoisDoGrade, ['answer', 'webSearch'])
     .addEdge('webSearch', 'retrieve')
+    .addEdge('answer', END)
     .compile();
 }
