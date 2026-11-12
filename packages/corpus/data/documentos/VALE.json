@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 52978000000,
-    "paragraph": "No 3T25, a Vale S.A. reportou receita líquida de R$ 56,7 bilhões, alta de 7,0% frente ao 3T24. O lucro líquido foi de R$ 14,7 bilhões, com margem líquida de 25,9%. O caixa gerado nas operações somou R$ 13,7 bilhões."
+    "paragraph": "No 3T25, a Vale S.A. reportou receita líquida de R$ 56,7 bilhões, alta de 7,0% frente ao 3T24. O lucro bruto foi de R$ 20,6 bilhões. O lucro líquido foi de R$ 14,7 bilhões, com margem líquida de 25,9%. O caixa gerado nas operações somou R$ 13,7 bilhões. Ao fim do trimestre, o ativo total era de R$ 485,0 bilhões e o patrimônio líquido, de R$ 224,7 bilhões."
   },
   {
     "ticker": "VALE",
@@ -30,7 +30,7 @@
     "caixa_operacional": 14745000000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Vale S.A. reportou receita líquida de R$ 59,7 bilhões, alta de 5,2% frente ao 3T25. O lucro líquido foi de R$ -23,2 bilhões, com margem líquida de -38,9%. O caixa gerado nas operações somou R$ 14,7 bilhões."
+    "paragraph": "No 4T25, a Vale S.A. reportou receita líquida de R$ 59,7 bilhões, alta de 5,2% frente ao 3T25. O lucro bruto foi de R$ 23,1 bilhões. O lucro líquido foi de R$ -23,2 bilhões, com margem líquida de -38,9%. O caixa gerado nas operações somou R$ 14,7 bilhões. Ao fim do trimestre, o ativo total era de R$ 476,1 bilhões e o patrimônio líquido, de R$ 188,9 bilhões."
   },
   {
     "ticker": "VALE",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 47411000000,
-    "paragraph": "No 1T26, a Vale S.A. reportou receita líquida de R$ 48,7 bilhões, alta de 2,7% frente ao 1T25 e queda de 18,4% frente ao 4T25. O lucro líquido foi de R$ 10,2 bilhões, com margem líquida de 21,0%. O caixa gerado nas operações somou R$ 9,8 bilhões."
+    "paragraph": "No 1T26, a Vale S.A. reportou receita líquida de R$ 48,7 bilhões, alta de 2,7% frente ao 1T25 e queda de 18,4% frente ao 4T25. O lucro bruto foi de R$ 16,3 bilhões. O lucro líquido foi de R$ 10,2 bilhões, com margem líquida de 21,0%. O caixa gerado nas operações somou R$ 9,8 bilhões. Ao fim do trimestre, o ativo total era de R$ 457,2 bilhões e o patrimônio líquido, de R$ 195,9 bilhões."
   },
   {
     "ticker": "VALE",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 49807000000,
-    "paragraph": "No 2T26, a Vale S.A. reportou receita líquida de R$ 53,0 bilhões, alta de 6,4% frente ao 2T25 e alta de 8,9% frente ao 1T26. O lucro líquido foi de R$ 7,0 bilhões, com margem líquida de 13,3%. O caixa gerado nas operações somou R$ 12,3 bilhões."
+    "paragraph": "No 2T26, a Vale S.A. reportou receita líquida de R$ 53,0 bilhões, alta de 6,4% frente ao 2T25 e alta de 8,9% frente ao 1T26. O lucro bruto foi de R$ 16,2 bilhões. O lucro líquido foi de R$ 7,0 bilhões, com margem líquida de 13,3%. O caixa gerado nas operações somou R$ 12,3 bilhões. Ao fim do trimestre, o ativo total era de R$ 462,2 bilhões e o patrimônio líquido, de R$ 201,5 bilhões."
   }
 ]

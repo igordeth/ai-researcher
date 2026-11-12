@@ -29,7 +29,7 @@ describe('gerarParagrafo', () => {
     });
 
     expect(paragrafo).toBe(
-      'No 3T25, a Vale S.A. reportou receita líquida de R$ 56,7 bilhões, alta de 13,4% frente ao 3T24 e queda de 5,5% frente ao 2T25. O lucro líquido foi de R$ 14,7 bilhões, com margem líquida de 25,9%. O caixa gerado nas operações somou R$ 8,5 bilhões.',
+      'No 3T25, a Vale S.A. reportou receita líquida de R$ 56,7 bilhões, alta de 13,4% frente ao 3T24 e queda de 5,5% frente ao 2T25. O lucro bruto foi de R$ 20,6 bilhões. O lucro líquido foi de R$ 14,7 bilhões, com margem líquida de 25,9%. O caixa gerado nas operações somou R$ 8,5 bilhões. Ao fim do trimestre, o ativo total era de R$ 485,0 bilhões e o patrimônio líquido, de R$ 224,7 bilhões.',
     );
 
     // determinismo: rodar de novo com a mesma entrada dá exatamente a mesma string
@@ -72,6 +72,22 @@ describe('gerarParagrafo', () => {
         'No 3T25, a Vale S.A. reportou receita líquida de R$ 56,7 bilhões. O lucro',
       ),
     ).toBe(true);
+  });
+
+  it('traz os seis indicadores, inclusive os de balanço, para a busca e a resposta os encontrarem', () => {
+    const paragrafo = gerarParagrafo(indicadorBase());
+
+    expect(paragrafo).toContain('O lucro bruto foi de R$ 20,6 bilhões.');
+    expect(paragrafo).toContain(
+      'Ao fim do trimestre, o ativo total era de R$ 485,0 bilhões e o patrimônio líquido, de R$ 224,7 bilhões.',
+    );
+  });
+
+  it('formata valores acima de mil bilhões com separador de milhar, como o ativo de um banco', () => {
+    const indicador = indicadorBase();
+    indicador.ativo_total = 3_171_200_000_000;
+
+    expect(gerarParagrafo(indicador)).toContain('o ativo total era de R$ 3.171,2 bilhões');
   });
 
   it('usa milhões quando o valor fica abaixo de 1 bilhão', () => {

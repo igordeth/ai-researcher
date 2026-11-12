@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 2536849000,
-    "paragraph": "No 3T25, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,3 bilhões, alta de 31,8% frente ao 3T24. O lucro líquido foi de R$ 738,1 milhões, com margem líquida de 22,1%. O caixa gerado nas operações somou R$ 670,0 milhões."
+    "paragraph": "No 3T25, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,3 bilhões, alta de 31,8% frente ao 3T24. O lucro bruto foi de R$ 1,5 bilhões. O lucro líquido foi de R$ 738,1 milhões, com margem líquida de 22,1%. O caixa gerado nas operações somou R$ 670,0 milhões. Ao fim do trimestre, o ativo total era de R$ 56,5 bilhões e o patrimônio líquido, de R$ 13,5 bilhões."
   },
   {
     "ticker": "EGIE",
@@ -30,7 +30,7 @@
     "caixa_operacional": 1045368000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,4 bilhões, alta de 2,2% frente ao 3T25. O lucro líquido foi de R$ 726,0 milhões, com margem líquida de 21,2%. O caixa gerado nas operações somou R$ 1,0 bilhões."
+    "paragraph": "No 4T25, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,4 bilhões, alta de 2,2% frente ao 3T25. O lucro bruto foi de R$ 1,4 bilhões. O lucro líquido foi de R$ 726,0 milhões, com margem líquida de 21,2%. O caixa gerado nas operações somou R$ 1,0 bilhões. Ao fim do trimestre, o ativo total era de R$ 55,3 bilhões e o patrimônio líquido, de R$ 13,9 bilhões."
   },
   {
     "ticker": "EGIE",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 3013069000,
-    "paragraph": "No 1T26, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,4 bilhões, alta de 13,1% frente ao 1T25 e queda de 0,3% frente ao 4T25. O lucro líquido foi de R$ 792,1 milhões, com margem líquida de 23,2%. O caixa gerado nas operações somou R$ 1,3 bilhões."
+    "paragraph": "No 1T26, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,4 bilhões, alta de 13,1% frente ao 1T25 e queda de 0,3% frente ao 4T25. O lucro bruto foi de R$ 1,8 bilhões. O lucro líquido foi de R$ 792,1 milhões, com margem líquida de 23,2%. O caixa gerado nas operações somou R$ 1,3 bilhões. Ao fim do trimestre, o ativo total era de R$ 58,7 bilhões e o patrimônio líquido, de R$ 14,8 bilhões."
   },
   {
     "ticker": "EGIE",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 3086121000,
-    "paragraph": "No 2T26, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,5 bilhões, alta de 13,8% frente ao 2T25 e alta de 3,0% frente ao 1T26. O lucro líquido foi de R$ 2,0 bilhões, com margem líquida de 55,9%. O caixa gerado nas operações somou R$ 1,3 bilhões."
+    "paragraph": "No 2T26, a Engie Brasil Energia S.A. reportou receita líquida de R$ 3,5 bilhões, alta de 13,8% frente ao 2T25 e alta de 3,0% frente ao 1T26. O lucro bruto foi de R$ 1,7 bilhões. O lucro líquido foi de R$ 2,0 bilhões, com margem líquida de 55,9%. O caixa gerado nas operações somou R$ 1,3 bilhões. Ao fim do trimestre, o ativo total era de R$ 59,0 bilhões e o patrimônio líquido, de R$ 16,1 bilhões."
   }
 ]

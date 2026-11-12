@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 10148885000,
-    "paragraph": "No 3T25, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 10,6 bilhões, alta de 4,6% frente ao 3T24. O lucro líquido foi de R$ 796,7 milhões, com margem líquida de 7,5%. O caixa gerado nas operações somou R$ 1,1 bilhões."
+    "paragraph": "No 3T25, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 10,6 bilhões, alta de 4,6% frente ao 3T24. O lucro bruto foi de R$ 1,6 bilhões. O lucro líquido foi de R$ 796,7 milhões, com margem líquida de 7,5%. O caixa gerado nas operações somou R$ 1,1 bilhões. Ao fim do trimestre, o ativo total era de R$ 64,8 bilhões e o patrimônio líquido, de R$ 28,7 bilhões."
   },
   {
     "ticker": "CMIG",
@@ -30,7 +30,7 @@
     "caixa_operacional": 652537000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 11,5 bilhões, alta de 8,3% frente ao 3T25. O lucro líquido foi de R$ 1,9 bilhões, com margem líquida de 16,3%. O caixa gerado nas operações somou R$ 652,5 milhões."
+    "paragraph": "No 4T25, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 11,5 bilhões, alta de 8,3% frente ao 3T25. O lucro bruto foi de R$ 1,6 bilhões. O lucro líquido foi de R$ 1,9 bilhões, com margem líquida de 16,3%. O caixa gerado nas operações somou R$ 652,5 milhões. Ao fim do trimestre, o ativo total era de R$ 67,0 bilhões e o patrimônio líquido, de R$ 28,6 bilhões."
   },
   {
     "ticker": "CMIG",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 9844231000,
-    "paragraph": "No 1T26, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 10,5 bilhões, alta de 6,3% frente ao 1T25 e queda de 9,0% frente ao 4T25. O lucro líquido foi de R$ 979,0 milhões, com margem líquida de 9,4%. O caixa gerado nas operações somou R$ 1,1 bilhões."
+    "paragraph": "No 1T26, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 10,5 bilhões, alta de 6,3% frente ao 1T25 e queda de 9,0% frente ao 4T25. O lucro bruto foi de R$ 1,7 bilhões. O lucro líquido foi de R$ 979,0 milhões, com margem líquida de 9,4%. O caixa gerado nas operações somou R$ 1,1 bilhões. Ao fim do trimestre, o ativo total era de R$ 68,2 bilhões e o patrimônio líquido, de R$ 28,9 bilhões."
   },
   {
     "ticker": "CMIG",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 10786295000,
-    "paragraph": "No 2T26, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 11,2 bilhões, alta de 3,4% frente ao 2T25 e alta de 6,6% frente ao 1T26. O lucro líquido foi de R$ 945,4 milhões, com margem líquida de 8,5%. O caixa gerado nas operações somou R$ 555,1 milhões."
+    "paragraph": "No 2T26, a Cia Energética de Minas Gerais - Cemig reportou receita líquida de R$ 11,2 bilhões, alta de 3,4% frente ao 2T25 e alta de 6,6% frente ao 1T26. O lucro bruto foi de R$ 2,0 bilhões. O lucro líquido foi de R$ 945,4 milhões, com margem líquida de 8,5%. O caixa gerado nas operações somou R$ 555,1 milhões. Ao fim do trimestre, o ativo total era de R$ 70,9 bilhões e o patrimônio líquido, de R$ 29,2 bilhões."
   }
 ]

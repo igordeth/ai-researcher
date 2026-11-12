@@ -74,11 +74,17 @@ export function gerarParagrafo(
   const sufixoReceita = clausulas.length > 0 ? `, ${clausulas.join(' e ')}` : '';
   const margemLiquida = (indicador.lucro_liquido / indicador.receita_liquida) * 100;
 
+  // Os seis indicadores entram no texto: o parágrafo é a única coisa que o LLM lê, e é dele que
+  // sai o embedding. Indicador fora do texto não é encontrado pela busca nem citado na resposta.
+  // Receita, lucros e caixa são fluxos do trimestre; ativo e patrimônio são a posição no fim dele.
   return (
     `No ${indicador.period}, a ${indicador.company_name} reportou receita líquida de ` +
     `${formatarMoeda(indicador.receita_liquida)}${sufixoReceita}. ` +
+    `O lucro bruto foi de ${formatarMoeda(indicador.lucro_bruto)}. ` +
     `O lucro líquido foi de ${formatarMoeda(indicador.lucro_liquido)}, com margem líquida de ` +
     `${FORMATADOR_UMA_CASA.format(margemLiquida)}%. ` +
-    `O caixa gerado nas operações somou ${formatarMoeda(indicador.caixa_operacional)}.`
+    `O caixa gerado nas operações somou ${formatarMoeda(indicador.caixa_operacional)}. ` +
+    `Ao fim do trimestre, o ativo total era de ${formatarMoeda(indicador.ativo_total)} ` +
+    `e o patrimônio líquido, de ${formatarMoeda(indicador.patrimonio_liquido)}.`
   );
 }

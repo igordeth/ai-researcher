@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 77935000000,
-    "paragraph": "No 3T25, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 97,4 bilhões, alta de 25,0% frente ao 3T24. O lucro líquido foi de R$ 11,6 bilhões, com margem líquida de 11,9%. O caixa gerado nas operações somou R$ 75,7 bilhões."
+    "paragraph": "No 3T25, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 97,4 bilhões, alta de 25,0% frente ao 3T24. O lucro bruto foi de R$ 35,9 bilhões. O lucro líquido foi de R$ 11,6 bilhões, com margem líquida de 11,9%. O caixa gerado nas operações somou R$ 75,7 bilhões. Ao fim do trimestre, o ativo total era de R$ 2.969,4 bilhões e o patrimônio líquido, de R$ 224,7 bilhões."
   },
   {
     "ticker": "ITUB",
@@ -30,7 +30,7 @@
     "caixa_operacional": -43422000000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 89,5 bilhões, queda de 8,1% frente ao 3T25. O lucro líquido foi de R$ 12,1 bilhões, com margem líquida de 13,6%. O caixa gerado nas operações somou R$ -43,4 bilhões."
+    "paragraph": "No 4T25, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 89,5 bilhões, queda de 8,1% frente ao 3T25. O lucro bruto foi de R$ 36,0 bilhões. O lucro líquido foi de R$ 12,1 bilhões, com margem líquida de 13,6%. O caixa gerado nas operações somou R$ -43,4 bilhões. Ao fim do trimestre, o ativo total era de R$ 3.066,2 bilhões e o patrimônio líquido, de R$ 215,1 bilhões."
   },
   {
     "ticker": "ITUB",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 97490000000,
-    "paragraph": "No 1T26, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 99,0 bilhões, alta de 1,6% frente ao 1T25 e alta de 10,7% frente ao 4T25. O lucro líquido foi de R$ 11,9 bilhões, com margem líquida de 12,0%. O caixa gerado nas operações somou R$ 55,6 bilhões."
+    "paragraph": "No 1T26, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 99,0 bilhões, alta de 1,6% frente ao 1T25 e alta de 10,7% frente ao 4T25. O lucro bruto foi de R$ 34,7 bilhões. O lucro líquido foi de R$ 11,9 bilhões, com margem líquida de 12,0%. O caixa gerado nas operações somou R$ 55,6 bilhões. Ao fim do trimestre, o ativo total era de R$ 3.171,2 bilhões e o patrimônio líquido, de R$ 220,0 bilhões."
   },
   {
     "ticker": "ITUB",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 102761000000,
-    "paragraph": "No 2T26, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 100,1 bilhões, queda de 2,6% frente ao 2T25 e alta de 1,0% frente ao 1T26. O lucro líquido foi de R$ 12,3 bilhões, com margem líquida de 12,3%. O caixa gerado nas operações somou R$ 71,1 bilhões."
+    "paragraph": "No 2T26, a Itaú Unibanco Holding S.A. reportou receita líquida de R$ 100,1 bilhões, queda de 2,6% frente ao 2T25 e alta de 1,0% frente ao 1T26. O lucro bruto foi de R$ 37,1 bilhões. O lucro líquido foi de R$ 12,3 bilhões, com margem líquida de 12,3%. O caixa gerado nas operações somou R$ 71,1 bilhões. Ao fim do trimestre, o ativo total era de R$ 3.202,1 bilhões e o patrimônio líquido, de R$ 228,0 bilhões."
   }
 ]

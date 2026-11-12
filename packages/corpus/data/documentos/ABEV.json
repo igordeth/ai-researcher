@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 22096739000,
-    "paragraph": "No 3T25, a Ambev S.A. reportou receita líquida de R$ 20,8 bilhões, queda de 5,7% frente ao 3T24. O lucro líquido foi de R$ 4,9 bilhões, com margem líquida de 23,3%. O caixa gerado nas operações somou R$ 6,9 bilhões."
+    "paragraph": "No 3T25, a Ambev S.A. reportou receita líquida de R$ 20,8 bilhões, queda de 5,7% frente ao 3T24. O lucro bruto foi de R$ 10,7 bilhões. O lucro líquido foi de R$ 4,9 bilhões, com margem líquida de 23,3%. O caixa gerado nas operações somou R$ 6,9 bilhões. Ao fim do trimestre, o ativo total era de R$ 140,8 bilhões e o patrimônio líquido, de R$ 92,7 bilhões."
   },
   {
     "ticker": "ABEV",
@@ -30,7 +30,7 @@
     "caixa_operacional": 13251927000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Ambev S.A. reportou receita líquida de R$ 24,8 bilhões, alta de 19,0% frente ao 3T25. O lucro líquido foi de R$ 4,5 bilhões, com margem líquida de 18,3%. O caixa gerado nas operações somou R$ 13,3 bilhões."
+    "paragraph": "No 4T25, a Ambev S.A. reportou receita líquida de R$ 24,8 bilhões, alta de 19,0% frente ao 3T25. O lucro bruto foi de R$ 13,1 bilhões. O lucro líquido foi de R$ 4,5 bilhões, com margem líquida de 18,3%. O caixa gerado nas operações somou R$ 13,3 bilhões. Ao fim do trimestre, o ativo total era de R$ 145,1 bilhões e o patrimônio líquido, de R$ 88,8 bilhões."
   },
   {
     "ticker": "ABEV",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 22497378000,
-    "paragraph": "No 1T26, a Ambev S.A. reportou receita líquida de R$ 22,5 bilhões, queda de 0,1% frente ao 1T25 e queda de 9,4% frente ao 4T25. O lucro líquido foi de R$ 3,9 bilhões, com margem líquida de 17,3%. O caixa gerado nas operações somou R$ 3,2 bilhões."
+    "paragraph": "No 1T26, a Ambev S.A. reportou receita líquida de R$ 22,5 bilhões, queda de 0,1% frente ao 1T25 e queda de 9,4% frente ao 4T25. O lucro bruto foi de R$ 11,6 bilhões. O lucro líquido foi de R$ 3,9 bilhões, com margem líquida de 17,3%. O caixa gerado nas operações somou R$ 3,2 bilhões. Ao fim do trimestre, o ativo total era de R$ 142,8 bilhões e o patrimônio líquido, de R$ 90,8 bilhões."
   },
   {
     "ticker": "ABEV",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 20090194000,
-    "paragraph": "No 2T26, a Ambev S.A. reportou receita líquida de R$ 20,1 bilhões, alta de 0,3% frente ao 2T25 e queda de 10,3% frente ao 1T26. O lucro líquido foi de R$ 3,5 bilhões, com margem líquida de 17,2%. O caixa gerado nas operações somou R$ 4,7 bilhões."
+    "paragraph": "No 2T26, a Ambev S.A. reportou receita líquida de R$ 20,1 bilhões, alta de 0,3% frente ao 2T25 e queda de 10,3% frente ao 1T26. O lucro bruto foi de R$ 10,4 bilhões. O lucro líquido foi de R$ 3,5 bilhões, com margem líquida de 17,2%. O caixa gerado nas operações somou R$ 4,7 bilhões. Ao fim do trimestre, o ativo total era de R$ 138,2 bilhões e o patrimônio líquido, de R$ 88,9 bilhões."
   }
 ]

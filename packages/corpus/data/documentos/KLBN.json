@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 4998729000,
-    "paragraph": "No 3T25, a Klabin S.A. reportou receita líquida de R$ 5,4 bilhões, alta de 8,6% frente ao 3T24. O lucro líquido foi de R$ 477,9 milhões, com margem líquida de 8,8%. O caixa gerado nas operações somou R$ 1,9 bilhões."
+    "paragraph": "No 3T25, a Klabin S.A. reportou receita líquida de R$ 5,4 bilhões, alta de 8,6% frente ao 3T24. O lucro bruto foi de R$ 2,1 bilhões. O lucro líquido foi de R$ 477,9 milhões, com margem líquida de 8,8%. O caixa gerado nas operações somou R$ 1,9 bilhões. Ao fim do trimestre, o ativo total era de R$ 62,2 bilhões e o patrimônio líquido, de R$ 14,7 bilhões."
   },
   {
     "ticker": "KLBN",
@@ -30,7 +30,7 @@
     "caixa_operacional": 856320000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Klabin S.A. reportou receita líquida de R$ 5,2 bilhões, queda de 4,8% frente ao 3T25. O lucro líquido foi de R$ 168,5 milhões, com margem líquida de 3,3%. O caixa gerado nas operações somou R$ 856,3 milhões."
+    "paragraph": "No 4T25, a Klabin S.A. reportou receita líquida de R$ 5,2 bilhões, queda de 4,8% frente ao 3T25. O lucro bruto foi de R$ 1,5 bilhões. O lucro líquido foi de R$ 168,5 milhões, com margem líquida de 3,3%. O caixa gerado nas operações somou R$ 856,3 milhões. Ao fim do trimestre, o ativo total era de R$ 63,8 bilhões e o patrimônio líquido, de R$ 14,4 bilhões."
   },
   {
     "ticker": "KLBN",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 4858534000,
-    "paragraph": "No 1T26, a Klabin S.A. reportou receita líquida de R$ 4,9 bilhões, alta de 1,8% frente ao 1T25 e queda de 4,2% frente ao 4T25. O lucro líquido foi de R$ -497,0 milhões, com margem líquida de -10,0%. O caixa gerado nas operações somou R$ 1,3 bilhões."
+    "paragraph": "No 1T26, a Klabin S.A. reportou receita líquida de R$ 4,9 bilhões, alta de 1,8% frente ao 1T25 e queda de 4,2% frente ao 4T25. O lucro bruto foi de R$ 504,0 milhões. O lucro líquido foi de R$ -497,0 milhões, com margem líquida de -10,0%. O caixa gerado nas operações somou R$ 1,3 bilhões. Ao fim do trimestre, o ativo total era de R$ 62,1 bilhões e o patrimônio líquido, de R$ 15,6 bilhões."
   },
   {
     "ticker": "KLBN",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 5247202000,
-    "paragraph": "No 2T26, a Klabin S.A. reportou receita líquida de R$ 5,2 bilhões, queda de 1,8% frente ao 2T25 e alta de 4,1% frente ao 1T26. O lucro líquido foi de R$ 386,6 milhões, com margem líquida de 7,5%. O caixa gerado nas operações somou R$ 1,6 bilhões."
+    "paragraph": "No 2T26, a Klabin S.A. reportou receita líquida de R$ 5,2 bilhões, queda de 1,8% frente ao 2T25 e alta de 4,1% frente ao 1T26. O lucro bruto foi de R$ 1,7 bilhões. O lucro líquido foi de R$ 386,6 milhões, com margem líquida de 7,5%. O caixa gerado nas operações somou R$ 1,6 bilhões. Ao fim do trimestre, o ativo total era de R$ 63,7 bilhões e o patrimônio líquido, de R$ 16,0 bilhões."
   }
 ]

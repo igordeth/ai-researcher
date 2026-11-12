@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 12273546000,
-    "paragraph": "No 3T25, a Suzano S.A. reportou receita líquida de R$ 12,2 bilhões, queda de 1,0% frente ao 3T24. O lucro líquido foi de R$ 2,0 bilhões, com margem líquida de 16,1%. O caixa gerado nas operações somou R$ 4,0 bilhões."
+    "paragraph": "No 3T25, a Suzano S.A. reportou receita líquida de R$ 12,2 bilhões, queda de 1,0% frente ao 3T24. O lucro bruto foi de R$ 3,7 bilhões. O lucro líquido foi de R$ 2,0 bilhões, com margem líquida de 16,1%. O caixa gerado nas operações somou R$ 4,0 bilhões. Ao fim do trimestre, o ativo total era de R$ 164,4 bilhões e o patrimônio líquido, de R$ 45,3 bilhões."
   },
   {
     "ticker": "SUZB",
@@ -30,7 +30,7 @@
     "caixa_operacional": 5359653000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Suzano S.A. reportou receita líquida de R$ 13,1 bilhões, alta de 7,9% frente ao 3T25. O lucro líquido foi de R$ 116,2 milhões, com margem líquida de 0,9%. O caixa gerado nas operações somou R$ 5,4 bilhões."
+    "paragraph": "No 4T25, a Suzano S.A. reportou receita líquida de R$ 13,1 bilhões, alta de 7,9% frente ao 3T25. O lucro bruto foi de R$ 4,0 bilhões. O lucro líquido foi de R$ 116,2 milhões, com margem líquida de 0,9%. O caixa gerado nas operações somou R$ 5,4 bilhões. Ao fim do trimestre, o ativo total era de R$ 167,9 bilhões e o patrimônio líquido, de R$ 44,0 bilhões."
   },
   {
     "ticker": "SUZB",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 11552921000,
-    "paragraph": "No 1T26, a Suzano S.A. reportou receita líquida de R$ 11,0 bilhões, queda de 5,1% frente ao 1T25 e queda de 16,4% frente ao 4T25. O lucro líquido foi de R$ 4,3 bilhões, com margem líquida de 39,3%. O caixa gerado nas operações somou R$ 2,9 bilhões."
+    "paragraph": "No 1T26, a Suzano S.A. reportou receita líquida de R$ 11,0 bilhões, queda de 5,1% frente ao 1T25 e queda de 16,4% frente ao 4T25. O lucro bruto foi de R$ 3,2 bilhões. O lucro líquido foi de R$ 4,3 bilhões, com margem líquida de 39,3%. O caixa gerado nas operações somou R$ 2,9 bilhões. Ao fim do trimestre, o ativo total era de R$ 165,8 bilhões e o patrimônio líquido, de R$ 48,2 bilhões."
   },
   {
     "ticker": "SUZB",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 13295895000,
-    "paragraph": "No 2T26, a Suzano S.A. reportou receita líquida de R$ 11,6 bilhões, queda de 12,8% frente ao 2T25 e alta de 5,7% frente ao 1T26. O lucro líquido foi de R$ 1,8 bilhões, com margem líquida de 15,6%. O caixa gerado nas operações somou R$ 4,4 bilhões."
+    "paragraph": "No 2T26, a Suzano S.A. reportou receita líquida de R$ 11,6 bilhões, queda de 12,8% frente ao 2T25 e alta de 5,7% frente ao 1T26. O lucro bruto foi de R$ 2,8 bilhões. O lucro líquido foi de R$ 1,8 bilhões, com margem líquida de 15,6%. O caixa gerado nas operações somou R$ 4,4 bilhões. Ao fim do trimestre, o ativo total era de R$ 171,0 bilhões e o patrimônio líquido, de R$ 49,9 bilhões."
   }
 ]

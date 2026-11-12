@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 15522712000,
-    "paragraph": "No 3T25, a BRF S.A. reportou receita líquida de R$ 16,4 bilhões, alta de 5,6% frente ao 3T24. O lucro líquido foi de R$ 790,1 milhões, com margem líquida de 4,8%. O caixa gerado nas operações somou R$ 2,3 bilhões."
+    "paragraph": "No 3T25, a BRF S.A. reportou receita líquida de R$ 16,4 bilhões, alta de 5,6% frente ao 3T24. O lucro bruto foi de R$ 4,0 bilhões. O lucro líquido foi de R$ 790,1 milhões, com margem líquida de 4,8%. O caixa gerado nas operações somou R$ 2,3 bilhões. Ao fim do trimestre, o ativo total era de R$ 64,3 bilhões e o patrimônio líquido, de R$ 15,3 bilhões."
   },
   {
     "ticker": "BRFS",
@@ -30,7 +30,7 @@
     "caixa_operacional": 1986006000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a BRF S.A. reportou receita líquida de R$ 17,8 bilhões, alta de 8,4% frente ao 3T25. O lucro líquido foi de R$ 578,1 milhões, com margem líquida de 3,3%. O caixa gerado nas operações somou R$ 2,0 bilhões."
+    "paragraph": "No 4T25, a BRF S.A. reportou receita líquida de R$ 17,8 bilhões, alta de 8,4% frente ao 3T25. O lucro bruto foi de R$ 4,2 bilhões. O lucro líquido foi de R$ 578,1 milhões, com margem líquida de 3,3%. O caixa gerado nas operações somou R$ 2,0 bilhões. Ao fim do trimestre, o ativo total era de R$ 68,3 bilhões e o patrimônio líquido, de R$ 15,0 bilhões."
   },
   {
     "ticker": "BRFS",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 15512021000,
-    "paragraph": "No 1T26, a BRF S.A. reportou receita líquida de R$ 15,3 bilhões, queda de 1,2% frente ao 1T25 e queda de 13,8% frente ao 4T25. O lucro líquido foi de R$ 538,8 milhões, com margem líquida de 3,5%. O caixa gerado nas operações somou R$ 2,1 bilhões."
+    "paragraph": "No 1T26, a BRF S.A. reportou receita líquida de R$ 15,3 bilhões, queda de 1,2% frente ao 1T25 e queda de 13,8% frente ao 4T25. O lucro bruto foi de R$ 3,7 bilhões. O lucro líquido foi de R$ 538,8 milhões, com margem líquida de 3,5%. O caixa gerado nas operações somou R$ 2,1 bilhões. Ao fim do trimestre, o ativo total era de R$ 66,1 bilhões e o patrimônio líquido, de R$ 15,4 bilhões."
   },
   {
     "ticker": "BRFS",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 15364631000,
-    "paragraph": "No 2T26, a BRF S.A. reportou receita líquida de R$ 16,0 bilhões, alta de 3,9% frente ao 2T25 e alta de 4,2% frente ao 1T26. O lucro líquido foi de R$ 545,0 milhões, com margem líquida de 3,4%. O caixa gerado nas operações somou R$ 2,4 bilhões."
+    "paragraph": "No 2T26, a BRF S.A. reportou receita líquida de R$ 16,0 bilhões, alta de 3,9% frente ao 2T25 e alta de 4,2% frente ao 1T26. O lucro bruto foi de R$ 3,8 bilhões. O lucro líquido foi de R$ 545,0 milhões, com margem líquida de 3,4%. O caixa gerado nas operações somou R$ 2,4 bilhões. Ao fim do trimestre, o ativo total era de R$ 67,6 bilhões e o patrimônio líquido, de R$ 15,3 bilhões."
   }
 ]

@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 3390509000,
-    "paragraph": "No 3T25, a Lojas Renner S.A. reportou receita líquida de R$ 3,6 bilhões, alta de 5,1% frente ao 3T24. O lucro líquido foi de R$ 279,4 milhões, com margem líquida de 7,8%. O caixa gerado nas operações somou R$ 1,0 bilhões."
+    "paragraph": "No 3T25, a Lojas Renner S.A. reportou receita líquida de R$ 3,6 bilhões, alta de 5,1% frente ao 3T24. O lucro bruto foi de R$ 2,2 bilhões. O lucro líquido foi de R$ 279,4 milhões, com margem líquida de 7,8%. O caixa gerado nas operações somou R$ 1,0 bilhões. Ao fim do trimestre, o ativo total era de R$ 18,3 bilhões e o patrimônio líquido, de R$ 10,1 bilhões."
   },
   {
     "ticker": "LREN",
@@ -30,7 +30,7 @@
     "caixa_operacional": 946999000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Lojas Renner S.A. reportou receita líquida de R$ 4,8 bilhões, alta de 35,8% frente ao 3T25. O lucro líquido foi de R$ 552,6 milhões, com margem líquida de 11,4%. O caixa gerado nas operações somou R$ 947,0 milhões."
+    "paragraph": "No 4T25, a Lojas Renner S.A. reportou receita líquida de R$ 4,8 bilhões, alta de 35,8% frente ao 3T25. O lucro bruto foi de R$ 3,0 bilhões. O lucro líquido foi de R$ 552,6 milhões, com margem líquida de 11,4%. O caixa gerado nas operações somou R$ 947,0 milhões. Ao fim do trimestre, o ativo total era de R$ 19,6 bilhões e o patrimônio líquido, de R$ 10,5 bilhões."
   },
   {
     "ticker": "LREN",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 3257576000,
-    "paragraph": "No 1T26, a Lojas Renner S.A. reportou receita líquida de R$ 3,4 bilhões, alta de 3,3% frente ao 1T25 e queda de 30,5% frente ao 4T25. O lucro líquido foi de R$ 257,3 milhões, com margem líquida de 7,6%. O caixa gerado nas operações somou R$ 661,6 milhões."
+    "paragraph": "No 1T26, a Lojas Renner S.A. reportou receita líquida de R$ 3,4 bilhões, alta de 3,3% frente ao 1T25 e queda de 30,5% frente ao 4T25. O lucro bruto foi de R$ 2,1 bilhões. O lucro líquido foi de R$ 257,3 milhões, com margem líquida de 7,6%. O caixa gerado nas operações somou R$ 661,6 milhões. Ao fim do trimestre, o ativo total era de R$ 18,9 bilhões e o patrimônio líquido, de R$ 10,4 bilhões."
   },
   {
     "ticker": "LREN",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 4167566000,
-    "paragraph": "No 2T26, a Lojas Renner S.A. reportou receita líquida de R$ 4,2 bilhões, alta de 0,8% frente ao 2T25 e alta de 24,8% frente ao 1T26. O lucro líquido foi de R$ 404,6 milhões, com margem líquida de 9,6%. O caixa gerado nas operações somou R$ 643,0 milhões."
+    "paragraph": "No 2T26, a Lojas Renner S.A. reportou receita líquida de R$ 4,2 bilhões, alta de 0,8% frente ao 2T25 e alta de 24,8% frente ao 1T26. O lucro bruto foi de R$ 2,6 bilhões. O lucro líquido foi de R$ 404,6 milhões, com margem líquida de 9,6%. O caixa gerado nas operações somou R$ 643,0 milhões. Ao fim do trimestre, o ativo total era de R$ 19,1 bilhões e o patrimônio líquido, de R$ 10,4 bilhões."
   }
 ]

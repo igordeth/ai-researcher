@@ -14,7 +14,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 68547731000,
-    "paragraph": "No 3T25, a Banco do Brasil S.A. reportou receita líquida de R$ 84,8 bilhões, alta de 23,7% frente ao 3T24. O lucro líquido foi de R$ 3,0 bilhões, com margem líquida de 3,5%. O caixa gerado nas operações somou R$ 37,5 bilhões."
+    "paragraph": "No 3T25, a Banco do Brasil S.A. reportou receita líquida de R$ 84,8 bilhões, alta de 23,7% frente ao 3T24. O lucro bruto foi de R$ 25,3 bilhões. O lucro líquido foi de R$ 3,0 bilhões, com margem líquida de 3,5%. O caixa gerado nas operações somou R$ 37,5 bilhões. Ao fim do trimestre, o ativo total era de R$ 2.540,8 bilhões e o patrimônio líquido, de R$ 187,1 bilhões."
   },
   {
     "ticker": "BBAS",
@@ -30,7 +30,7 @@
     "caixa_operacional": 49364936000,
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
-    "paragraph": "No 4T25, a Banco do Brasil S.A. reportou receita líquida de R$ 85,4 bilhões, alta de 0,8% frente ao 3T25. O lucro líquido foi de R$ 6,0 bilhões, com margem líquida de 7,0%. O caixa gerado nas operações somou R$ 49,4 bilhões."
+    "paragraph": "No 4T25, a Banco do Brasil S.A. reportou receita líquida de R$ 85,4 bilhões, alta de 0,8% frente ao 3T25. O lucro bruto foi de R$ 27,7 bilhões. O lucro líquido foi de R$ 6,0 bilhões, com margem líquida de 7,0%. O caixa gerado nas operações somou R$ 49,4 bilhões. Ao fim do trimestre, o ativo total era de R$ 2.455,1 bilhões e o patrimônio líquido, de R$ 193,6 bilhões."
   },
   {
     "ticker": "BBAS",
@@ -47,7 +47,7 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 71720089000,
-    "paragraph": "No 1T26, a Banco do Brasil S.A. reportou receita líquida de R$ 78,5 bilhões, alta de 9,4% frente ao 1T25 e queda de 8,2% frente ao 4T25. O lucro líquido foi de R$ 3,1 bilhões, com margem líquida de 4,0%. O caixa gerado nas operações somou R$ 20,7 bilhões."
+    "paragraph": "No 1T26, a Banco do Brasil S.A. reportou receita líquida de R$ 78,5 bilhões, alta de 9,4% frente ao 1T25 e queda de 8,2% frente ao 4T25. O lucro bruto foi de R$ 23,3 bilhões. O lucro líquido foi de R$ 3,1 bilhões, com margem líquida de 4,0%. O caixa gerado nas operações somou R$ 20,7 bilhões. Ao fim do trimestre, o ativo total era de R$ 2.610,2 bilhões e o patrimônio líquido, de R$ 196,9 bilhões."
   },
   {
     "ticker": "BBAS",
@@ -64,6 +64,6 @@
     "source_url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
     "fetched_at": "2026-11-10T17:24:14.003Z",
     "receita_mesmo_trimestre_ano_anterior": 77532482000,
-    "paragraph": "No 2T26, a Banco do Brasil S.A. reportou receita líquida de R$ 81,8 bilhões, alta de 5,5% frente ao 2T25 e alta de 4,2% frente ao 1T26. O lucro líquido foi de R$ 3,3 bilhões, com margem líquida de 4,0%. O caixa gerado nas operações somou R$ 13,3 bilhões."
+    "paragraph": "No 2T26, a Banco do Brasil S.A. reportou receita líquida de R$ 81,8 bilhões, alta de 5,5% frente ao 2T25 e alta de 4,2% frente ao 1T26. O lucro bruto foi de R$ 25,7 bilhões. O lucro líquido foi de R$ 3,3 bilhões, com margem líquida de 4,0%. O caixa gerado nas operações somou R$ 13,3 bilhões. Ao fim do trimestre, o ativo total era de R$ 2.588,1 bilhões e o patrimônio líquido, de R$ 190,8 bilhões."
   }
 ]
