@@ -20,7 +20,13 @@ export function gradePrompt({
 }): string {
   const contexto =
     documents.length > 0
-      ? documents.map((doc) => `- [${doc.ticker} ${doc.period}] ${doc.paragraph}`).join('\n')
+      ? documents
+          .map((doc) =>
+            doc.origem === 'cvm'
+              ? `- [${doc.ticker} ${doc.period}] ${doc.paragraph}`
+              : `- [web: ${doc.title}] ${doc.paragraph}`,
+          )
+          .join('\n')
       : '(nenhum documento encontrado)';
 
   return `Você avalia se o contexto abaixo é suficiente pra responder a pergunta do usuário.

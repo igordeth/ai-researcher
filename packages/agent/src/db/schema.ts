@@ -2,6 +2,7 @@ import {
   bigint,
   date,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -50,5 +51,33 @@ export const documentos = pgTable(
     // vector_cosine_ops: o índice só acelera consultas que usam o mesmo operador, o de distância
     // de cosseno (<=>). Uma busca com distância euclidiana (<->) não usaria este índice.
     index('documentos_embedding_idx').using('hnsw', table.embedding.op('vector_cosine_ops')),
+  ],
+);
+
+// Enriquecimento vindo da busca na web (nó webSearch). Tabela à parte de `documentos` porque não
+// tem os indicadores financeiros do corpus, e porque envelhece: tem prazo de validade (expires_at),
+// o dado da CVM não.
+export const documentosWeb = pgTable(
+  'documentos_web',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    // A pesquisa que trouxe a página. Serve para auditoria: porque é que este texto está na base.
+    query: text('query').notNull(),
+    title: text('title').notNull(),
+    content: text('content').notNull(),
+    sourceUrl: text('source_url').notNull(),
+    // Posição do chunk dentro da página (0, 1, 2...).
+    chunkIndex: integer('chunk_index').notNull(),
+    fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    // Ao contrário do corpus, nunca nulo: o chunk só é gravado depois de ter embedding.
+    embedding: vector('embedding', { dimensions: EMBEDDING_DIMENSIONS }).notNull(),
+  },
+  (table) => [
+    // Uma página é gravada por substituição (apaga os chunks do URL e insere os novos, numa
+    // transação). O índice único garante que nunca há dois chunks na mesma posição do mesmo URL,
+    // mesmo com duas gravações em simultâneo, e serve o DELETE por source_url.
+    uniqueIndex('documentos_web_source_url_chunk_idx').on(table.sourceUrl, table.chunkIndex),
+    index('documentos_web_embedding_idx').using('hnsw', table.embedding.op('vector_cosine_ops')),
   ],
 );

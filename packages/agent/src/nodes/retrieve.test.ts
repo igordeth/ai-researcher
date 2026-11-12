@@ -4,6 +4,7 @@ import type { RetrievedDoc } from '../db/retrieve-similar.js';
 import { makeRetrieveNode } from './retrieve.js';
 
 const documentoFake: RetrievedDoc = {
+  origem: 'cvm',
   id: '1',
   ticker: 'VALE',
   companyName: 'Vale S.A.',

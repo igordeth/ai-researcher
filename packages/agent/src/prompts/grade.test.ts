@@ -5,6 +5,7 @@ import { gradePrompt } from './grade.js';
 
 function documento(ticker: string, period: string, paragraph: string): RetrievedDoc {
   return {
+    origem: 'cvm',
     id: `${ticker}-${period}`,
     ticker,
     companyName: ticker,
@@ -30,6 +31,28 @@ describe('gradePrompt', () => {
 
     expect(prompt).toContain('- [VALE 1T26] Texto da Vale.\n- [PETR 1T26] Texto da Petrobras.');
     expect(prompt).toContain('Pergunta: Compare Vale e Petrobras no 1T26.');
+  });
+
+  it('marca o documento vindo da web com o título da página, e não com ticker', () => {
+    const prompt = gradePrompt({
+      question: 'Por que a receita da Vale caiu?',
+      documents: [
+        documento('VALE', '1T26', 'Texto da Vale.'),
+        {
+          origem: 'web',
+          id: 'w1',
+          title: 'Vale explica queda',
+          paragraph: 'O minério caiu.',
+          sourceUrl: 'https://exemplo.com',
+          fetchedAt: new Date('2026-11-12T00:00:00.000Z'),
+          distance: 0.2,
+        },
+      ],
+    });
+
+    expect(prompt).toContain(
+      '- [VALE 1T26] Texto da Vale.\n- [web: Vale explica queda] O minério caiu.',
+    );
   });
 
   it('avisa quando não há nenhum documento, em vez de mandar um contexto vazio', () => {
