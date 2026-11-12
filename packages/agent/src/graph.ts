@@ -75,7 +75,7 @@ export interface GraphDeps {
  * Atingir o limite não é erro: vai para o `answer` com `sufficient` falso, e a resposta avisa que o
  * contexto é parcial.
  */
-export function decidirDepoisDoGrade(state: ResearchStateValue): 'answer' | 'webSearch' {
+function decidirDepoisDoGrade(state: ResearchStateValue): 'answer' | 'webSearch' {
   if (state.sufficient) return 'answer';
   if (state.iterations >= MAX_ITERATIONS) return 'answer';
   return 'webSearch';
@@ -91,19 +91,22 @@ export function decidirDepoisDoGrade(state: ResearchStateValue): 'answer' | 'web
  * encontra-os na volta seguinte pela mesma busca por similaridade.
  */
 export function buildGraph(deps: GraphDeps) {
+  // Primeiro cada nó recebe as suas dependências; depois o grafo só liga nomes.
+  const retrieve = makeRetrieveNode({ embeddings: deps.embeddings, buscar: deps.buscar });
+  const grade = makeGradeNode(deps.gradeLlm);
+  const webSearch = makeWebSearchNode({
+    searchProvider: deps.searchProvider,
+    embeddings: deps.embeddings,
+    buscarPagina: deps.buscarPagina,
+    gravarPagina: deps.gravarPagina,
+  });
+  const answer = makeAnswerNode(deps.answerLlm);
+
   return new StateGraph(ResearchState)
-    .addNode('retrieve', makeRetrieveNode({ embeddings: deps.embeddings, buscar: deps.buscar }))
-    .addNode('grade', makeGradeNode(deps.gradeLlm))
-    .addNode(
-      'webSearch',
-      makeWebSearchNode({
-        searchProvider: deps.searchProvider,
-        embeddings: deps.embeddings,
-        buscarPagina: deps.buscarPagina,
-        gravarPagina: deps.gravarPagina,
-      }),
-    )
-    .addNode('answer', makeAnswerNode(deps.answerLlm))
+    .addNode('retrieve', retrieve)
+    .addNode('grade', grade)
+    .addNode('webSearch', webSearch)
+    .addNode('answer', answer)
     .addEdge(START, 'retrieve')
     .addEdge('retrieve', 'grade')
     .addConditionalEdges('grade', decidirDepoisDoGrade, ['answer', 'webSearch'])
