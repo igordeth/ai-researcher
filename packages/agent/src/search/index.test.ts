@@ -13,6 +13,7 @@ async function endpointChamado(): Promise<string> {
 describe('criarSearchProvider', () => {
   beforeEach(() => {
     // Ponto de partida conhecido, seja qual for o ambiente de quem corre os testes.
+    vi.stubEnv('DEMO', undefined);
     vi.stubEnv('SEARCH_PROVIDER', undefined);
     vi.stubEnv('SERPER_API_KEY', undefined);
     vi.stubEnv('GOOGLE_CUSTOM_SEARCH_API_KEY', undefined);
@@ -56,6 +57,17 @@ describe('criarSearchProvider', () => {
 
     vi.stubEnv('GOOGLE_CUSTOM_SEARCH_API_KEY', 'k');
     expect(() => criarSearchProvider()).toThrow(/exige GOOGLE_CUSTOM_SEARCH_CX\./);
+  });
+
+  it('com DEMO=true usa as fixtures, sem chave e sem rede', async () => {
+    vi.stubEnv('DEMO', 'true');
+    const fetchFake = vi.fn();
+    vi.stubGlobal('fetch', fetchFake);
+
+    const resultados = await criarSearchProvider().search('Por que a receita da Vale caiu?');
+
+    expect(resultados[0].url).toContain('.demo.example/');
+    expect(fetchFake).not.toHaveBeenCalled();
   });
 
   it('recusa provider desconhecido, dizendo os válidos', () => {
