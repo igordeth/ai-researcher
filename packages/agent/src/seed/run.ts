@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { EmbeddingsInterface } from '@langchain/core/embeddings';
 import { sql } from 'drizzle-orm';
 
 import { db, pool } from '../db/client.js';
@@ -21,10 +20,15 @@ const DOCUMENTOS_DIR = path.resolve(
 // chamadas simultâneas, um INSERT de 10 linhas, e só então o próximo lote.
 const TAMANHO_LOTE = 10;
 
+// Só a operação de que o seed precisa: um vetor por texto, na mesma ordem dos textos.
+export interface EmbeddingsEmLote {
+  embedDocuments(textos: string[]): Promise<number[][]>;
+}
+
 export interface OpcoesSeed {
   dir?: string;
   // Injetável: o modo DEMO passa um fake no lugar do cliente real.
-  embeddings?: EmbeddingsInterface;
+  embeddings?: EmbeddingsEmLote;
 }
 
 export async function semear({

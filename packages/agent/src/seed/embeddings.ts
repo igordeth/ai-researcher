@@ -1,16 +1,16 @@
-import type { EmbeddingsInterface } from '@langchain/core/embeddings';
 import { VertexAIEmbeddings } from '@langchain/google-vertexai';
 
 import { EMBEDDING_DIMENSIONS } from '../db/schema.js';
 
 /**
  * Cliente de embeddings REAL, que chama a Vertex AI pela rede. Fica isolado nesta função para que
- * o modo DEMO possa passar ao seed um fake com a mesma interface (EmbeddingsInterface, do
- * LangChain), sem rede e sem credencial.
+ * o modo DEMO possa trocá-lo por um fake, sem rede e sem credencial. Quem usa o cliente declara só
+ * o método de que precisa (EmbeddingsEmLote no seed, EmbeddingsClient no retrieve), e o
+ * VertexAIEmbeddings atende aos dois.
  *
  * A autenticação vem do ADC (`gcloud auth application-default login`); nenhuma chave em arquivo.
  */
-export function criarEmbeddings(): EmbeddingsInterface {
+export function criarEmbeddings(): VertexAIEmbeddings {
   const model = process.env.MODEL_EMBEDDING;
   if (!model) {
     // Nome de modelo nunca é fixo no código (ver CLAUDE.md, "Modelos"): trocar o modelo de
