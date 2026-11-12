@@ -58,12 +58,11 @@ flowchart LR
     R --> G[grade]
     G -->|suficiente| A[answer]
     G -->|insuficiente| W[webSearch]
-    W --> U[upsert]
-    U -->|máx. 2 voltas| R
+    W -->|máx. 2 voltas| R
   end
 
-  PG -.->|busca por similaridade| R
-  U -.->|grava documento da web| PG
+  PG -.->|busca por similaridade<br/>documentos + documentos_web| R
+  W -.->|grava chunks da web| PG
 ```
 
 | Metade | Quando roda | Custo | O que pode dar errado |
@@ -157,7 +156,7 @@ Todo documento carrega `ticker`, `company_name`, `setor`, `period`, `period_end`
 |---|---|---|
 | **Citação com data-base** | nó `answer` 🔜 | "Fonte: CVM, ITR 1T26 (encerrado em 2026-03-31)" |
 | **Ordenação e filtro** | `answer` 🔜, buscas futuras | escolher o "último trimestre" por `period_end`, não pela ordem da busca |
-| **Expiração** | `upsert` dos documentos da web 🔜 | notícia da web vence; dado da CVM não |
+| **Expiração** | `webSearch` e `retrieve` ✅ | notícia da web vence (`expires_at`, 7 dias); dado da CVM não |
 
 ### 3.7 Coleta ≠ carga: o snapshot versionado
 
@@ -280,7 +279,7 @@ O **Corrective RAG** põe um juiz no meio:
 
 ```
 retrieve → grade → [suficiente]   → answer
-                 → [insuficiente] → webSearch → upsert → retrieve (no máximo 2 voltas)
+                 → [insuficiente] → webSearch → retrieve (no máximo 2 voltas)
 ```
 
 A base deste projeto **só tem números**, por decisão de projeto. Isso cria uma fronteira nítida, fácil de demonstrar:
@@ -330,7 +329,7 @@ const documents = await buscar(embedding, topK);               // vetor → top-
 return { documents };
 ```
 
-O SQL gerado pelo Drizzle (`cosineDistance`):
+O SQL gerado pelo Drizzle (`cosineDistance`) para o corpus:
 
 ```sql
 SELECT id, ticker, company_name, period, period_end, paragraph, source_url, fetched_at,
@@ -341,8 +340,10 @@ ORDER BY embedding <=> '[...]'
 LIMIT 5;
 ```
 
+Uma consulta igual roda **em paralelo** em `documentos_web` (filtrando os expirados), e os dois resultados são combinados pela distância ([5.6](#56-websearch-)).
+
 - **A pergunta e os documentos usam o mesmo modelo de embedding.** Comparar vetores de modelos diferentes não faz sentido ([4.1](#41-o-que-é-um-embedding)).
-- O resultado (`RetrievedDoc`) carrega o `paragraph` (o que o LLM vai ler) e os metadados de citação.
+- O resultado (`RetrievedDoc`) carrega o `paragraph` (o que o LLM vai ler), os metadados de citação e a `origem` (`'cvm'` ou `'web'`).
 
 **Resultados reais**, com embeddings da Vertex sobre os 80 documentos:
 
@@ -407,14 +408,107 @@ graph.addConditionalEdges('grade', (state) => {
 - **Sem o guard, o grafo pode entrar em laço:** a busca web não acha o que falta, o `grade` diz insuficiente de novo, e assim por diante, gastando dinheiro a cada volta.
 - Estourar o limite **não é erro**: o grafo segue para `answer`, que deve avisar que o contexto é parcial.
 
-### 5.6 `webSearch` e `upsert` 🔜
+### 5.6 `webSearch` ✅
 
-Planejado no bloco D (tarefas D.6 e D.7):
+[packages/agent/src/nodes/web-search.ts](../packages/agent/src/nodes/web-search.ts) · [packages/agent/src/search/](../packages/agent/src/search/) · [packages/agent/src/web/](../packages/agent/src/web/) · [packages/agent/src/db/replace-web-page.ts](../packages/agent/src/db/replace-web-page.ts)
 
-- **`SearchProvider`**, uma interface com duas implementações (Google Custom Search e Serper), trocáveis por variável de ambiente. Aqui a interface se justifica: há **dois** usos concretos desde o início.
-- Os resultados são extraídos, divididos em chunks (texto da web é longo, ao contrário do corpus) e **gravados na mesma tabela** com `upsert`, com metadados de origem e **validade (TTL)**: notícia envelhece, dado da CVM não.
-- Depois do upsert, o grafo **volta ao `retrieve`**. A mesma busca por similaridade passa a encontrar o documento novo. É por isso que a função de busca não distingue CVM de web: para ela, todo documento é um vetor na tabela.
-- O enriquecimento **persiste**: a próxima pessoa que fizer uma pergunta parecida encontra o documento já na base, sem nova busca na web.
+Quando o `grade` diz "insuficiente", o `webSearch` procura na web o que faltou e **grava o que encontrou na base**. Ele não devolve nada para o estado: o efeito é a escrita, e o `retrieve`, na volta seguinte do laço, encontra os documentos novos pela mesma busca por similaridade.
+
+```mermaid
+flowchart LR
+  MA[missingAspects] --> QS[uma query<br/>por aspecto]
+  QS --> SP[SearchProvider<br/>top-3 por query]
+  SP --> FP[buscarPagina<br/>HTML, 10 s, 2 MB]
+  FP --> EX[extrairTexto]
+  EX --> CH[chunks de ~1000<br/>sobreposição 100]
+  CH --> EM[embedDocuments<br/>um lote por página]
+  EM --> DB[(documentos_web<br/>substitui por URL)]
+```
+
+#### O `SearchProvider`: uma interface, duas implementações
+
+```ts
+export interface SearchProvider {
+  search(query: string): Promise<SearchResult[]>; // { title, snippet, url }
+}
+```
+
+- **Serper** (padrão) e **Google Custom Search**, ambos com `fetch` nativo e sem SDK, trocáveis por `SEARCH_PROVIDER`. A interface se justifica porque há **dois usos concretos**.
+- A resposta da API externa é **validada com zod**, porque é fronteira. Toda falha (HTTP não-2xx, timeout, rede, resposta fora do formato) vira um tipo único, `SearchProviderError`, para quem chama tratar "a busca falhou" sem conhecer cada provider.
+- **A chave da API nunca entra na mensagem de erro.** No Google ela vai na URL, então nenhuma mensagem inclui a URL. Há teste para isso.
+- `criarSearchProvider()` lê a configuração e **falha na hora**, dizendo qual variável falta. É melhor o serviço não subir do que descobrir a chave em falta na primeira pergunta.
+
+> ⚠️ A Google fechou a Custom Search JSON API para clientes novos e anunciou o fim dela para 2027-01-01. Ela fica como segunda implementação, de demonstração. O Serper é o provider ativo.
+
+#### Por que aqui há chunking, e no corpus não
+
+O parágrafo da CVM tem cerca de 400 caracteres e fala de **uma** empresa em **um** trimestre. Uma página de notícia tem milhares de caracteres e vários assuntos, e um único embedding da página inteira representaria mal cada parte dela. Por isso o texto da página é dividido em chunks de **~1000 caracteres**, e cada chunk ganha seu próprio embedding.
+
+- **Sobreposição de 100 caracteres:** cada chunk repete o final do anterior. Uma frase cortada no limite aparece inteira em pelo menos um dos dois lados.
+- **O corte cai num espaço**, nunca no meio de uma palavra. Só uma "palavra" com mais de 500 caracteres (um URL enorme) é cortada no limite exato.
+- A extração e o chunking são **funções próprias, sem dependência**: tiram `script`, `style`, `head` e afins, as tags e as entidades HTML, e juntam os espaços. Não é um parser completo de HTML, mas basta para gerar embeddings e para o LLM ler, e tudo fica à vista e testado.
+
+#### A tabela `documentos_web`
+
+| Coluna | Para quê |
+|---|---|
+| `query` | qual pesquisa trouxe a página, para auditoria: por que este texto está na base |
+| `title`, `content`, `source_url` | o que se cita e o que o LLM lê |
+| `chunk_index` | a posição do chunk na página (0, 1, 2...) |
+| `fetched_at`, `expires_at` | quando foi buscado e até quando vale (**TTL** padrão de 7 dias) |
+| `embedding` | `vector(768)`, **nunca nulo**: o chunk só é gravado depois de ter vetor |
+
+**Por que uma tabela separada de `documentos`?** Os dois têm formas diferentes: o documento da web não tem `ticker`, `period` nem os indicadores. E têm ciclos de vida diferentes: notícia envelhece, dado da CVM não.
+
+#### Gravação idempotente: substituir a página inteira
+
+Fazer a mesma pergunta duas vezes não pode duplicar documentos. A gravação de uma página é uma **substituição numa transação**:
+
+```ts
+await db.transaction(async (tx) => {
+  await tx.delete(documentosWeb).where(eq(documentosWeb.sourceUrl, sourceUrl));
+  await tx.insert(documentosWeb).values(linhas);
+});
+```
+
+Ou a página fica inteira com os chunks novos, ou fica como estava. Uma página que encolheu não deixa chunks antigos para trás. O índice único `(source_url, chunk_index)` garante isso também na base, mesmo com duas gravações simultâneas.
+
+> **Lição real: identifique a página pelo URL final.** No primeiro teste com o Serper real, a segunda pesquisa devolveu **links de redirecionamento** (`google.com/goto?url=...`) que levavam às mesmas notícias da primeira. Com outro URL, a mesma página foi gravada duas vezes: 12 chunks repetidos, e o `retrieve` passou a trazer dois resultados idênticos. A correção foi usar o `response.url` do `fetch`, o endereço **depois** dos redirecionamentos. Depois dela: 0 chunks repetidos.
+
+#### Falhas: a página cai, o nó continua
+
+- Cada página roda em `Promise.allSettled`. Uma que falhe (fora do ar, timeout, PDF, sem texto, mais de 2 MB) **fica de fora**, e as outras são gravadas.
+- A **falha do próprio provider de busca propaga**: sem resultados, não há o que gravar, e a forma de degradar fica com quem monta o grafo (Bloco E).
+- Uma página que aparece em várias queries é processada **uma vez** por execução.
+
+#### A busca combinada no `retrieve`
+
+`buscarDocumentosSimilares` consulta as duas tabelas **em paralelo** e junta os resultados num só top-k, ordenado **só pela distância**:
+
+```ts
+const [corpus, web] = await Promise.all([buscarNoCorpus(db, v, k), buscarNaWeb(db, v, k)]);
+return [...corpus, ...web].sort((a, b) => a.distance - b.distance).slice(0, k);
+```
+
+- Pede **k a cada tabela**: o top-k combinado está sempre contido na união dos dois top-k.
+- **Documento expirado não volta:** `WHERE expires_at > now()`. A validade é aplicada na leitura, sem precisar de um job de limpeza, e usa o `now()` do banco, para haver um relógio só.
+- O resultado é uma **união discriminada**: `RetrievedDoc = DocumentoCvm | DocumentoWeb`, distinguidos pelo campo `origem`. Quem consome é obrigado pelo TypeScript a tratar os dois casos, como um `CASE` sobre uma coluna de tipo. O prompt do `grade` formata `[VALE 1T26] ...` para um e `[web: título] ...` para o outro.
+
+**Resultado real** (Serper, páginas e embeddings reais, Postgres local), para "Por que a receita da Vale caiu do 4T25 para o 1T26?":
+
+| Etapa | Resultado |
+|---|---|
+| `webSearch` | 2 páginas, 14 chunks, ~4 s |
+| repetir a mesma pergunta | nenhum chunk repetido |
+| `retrieve` depois | top-5 com 2 documentos CVM (VALE 1T26 e 4T25) e 3 chunks da notícia, intercalados pela distância |
+| documentos com `expires_at` no passado | 0 documentos da web no `retrieve` |
+
+#### Limitações conhecidas
+
+1. **O `grade` ainda não reconhece os documentos da web.** O prompt diz que "o contexto é só numérico", o que deixou de ser verdade. Com a notícia no contexto, ele continua respondendo "insuficiente", e o laço vai até o limite de iterações. Corrigir é uma frase no prompt, a validar no dataset.
+2. **Uma página só pode ocupar o top-k.** No teste, 3 dos 5 resultados eram chunks da mesma notícia. Diversificar por fonte (MMR) é uma melhoria possível, mas ainda sem uma pergunta que a exija.
+3. **Toda fonte entra igual.** Instagram e YouTube contam tanto quanto o RI da empresa. Uma lista de fontes preferidas ou bloqueadas melhoraria a citação.
+4. **O enriquecimento persiste por 7 dias.** A próxima pergunta parecida encontra a notícia já na base, sem nova busca, o que é bom para custo e ruim se a notícia mudar nesse prazo.
 
 ### 5.7 `answer` e o guardrail regulatório 🔜
 
@@ -502,6 +596,8 @@ Problemas reais deste projeto, na ordem em que apareceram. Cada um é uma liçã
 | "último trimestre" trouxe trimestres antigos primeiro | similaridade não entende tempo | ordem temporal se resolve com metadado (`period_end`), não com embedding |
 | "lote de 10" não virou 1 requisição | o modelo aceita 1 texto por chamada; a biblioteca paraleliza | leia o que a biblioteca faz por dentro antes de documentar um comportamento |
 | busca por distância euclidiana ignorou o índice | índice criado para cosseno | o operador da consulta tem que ser o do índice |
+| a mesma notícia gravada duas vezes | a busca devolveu um link de redirecionamento (`google.com/goto?url=...`) para uma página já gravada | identifique a página pelo URL **final**, depois dos redirecionamentos |
+| com a notícia certa no contexto, o `grade` ainda dizia "insuficiente" | o prompt afirma que o contexto é só numérico, e isso deixou de ser verdade com a web | ao mudar o que entra no contexto, revise os prompts que descrevem esse contexto |
 
 ---
 
@@ -540,10 +636,14 @@ packages/agent/                          INDEXAÇÃO E CONSULTA
   src/db/schema.ts                       tabela documentos, vector(768), índices
   migrations/                            SQL gerado pelo drizzle-kit
   src/seed/                              leitura + zod, lotes, embeddings, upsert
-  src/db/retrieve-similar.ts             busca por distância de cosseno
+  src/db/retrieve-similar.ts             busca combinada (corpus + web) por distância de cosseno
+  src/db/replace-web-page.ts             grava uma página da web por substituição, numa transação
   src/nodes/retrieve.ts                  nó retrieve
   src/nodes/grade.ts                     nó grade
+  src/nodes/web-search.ts                nó webSearch
   src/prompts/grade.ts                   prompt do grade
+  src/search/                            SearchProvider: Serper e Google Custom Search
+  src/web/                               busca da página, extração do texto, chunks
 
 evals/dataset.json                       27 perguntas de avaliação (grupos A, B, C)
 .claude/skills/langgraph-node/SKILL.md   convenções dos nós do grafo
@@ -569,3 +669,7 @@ Tente responder sem olhar o texto; a seção de referência está entre parênte
 12. O que impede o grafo de buscar na web para sempre? O que acontece quando o limite é atingido? (5.5)
 13. Como o sistema deve responder "qual o lucro no último trimestre?", se a busca trouxe primeiro um trimestre antigo? (5.7)
 14. Um teste com LLM fake passou. Isso prova que o prompt funciona? Como você verificaria? (6.1)
+15. Por que o texto da web é dividido em chunks e o parágrafo do corpus não? Para que serve a sobreposição? (5.6)
+16. Duas pesquisas devolvem URLs diferentes para a mesma notícia. O que impede a notícia de ser gravada duas vezes? (5.6)
+17. Por que a gravação de uma página é "apagar e inserir numa transação", e não um `INSERT` simples? (5.6)
+18. Como um documento da web deixa de aparecer na busca depois de 7 dias, sem nenhum job de limpeza? (5.6)
