@@ -1,4 +1,5 @@
 import type { RetrievedDoc } from '../db/retrieve-similar.js';
+import { montarContexto } from './rotulo.js';
 
 /**
  * Prompt do nó `grade`: o contexto recuperado responde a pergunta?
@@ -18,16 +19,7 @@ export function gradePrompt({
   question: string;
   documents: RetrievedDoc[];
 }): string {
-  const contexto =
-    documents.length > 0
-      ? documents
-          .map((doc) =>
-            doc.origem === 'cvm'
-              ? `- [${doc.ticker} ${doc.period}] ${doc.paragraph}`
-              : `- [web: ${doc.title}] ${doc.paragraph}`,
-          )
-          .join('\n')
-      : '(nenhum documento encontrado)';
+  const contexto = montarContexto(documents);
 
   return `Você avalia se o contexto abaixo é suficiente pra responder a pergunta do usuário.
 
