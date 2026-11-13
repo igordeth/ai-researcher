@@ -202,7 +202,7 @@ describe('POST /api/chat', () => {
     expect(response.statusCode).toBe(400);
     expect(response.headers['content-type']).toContain('application/problem+json');
     expect(response.json()).toMatchObject({
-      type: 'about:blank',
+      type: '/problemas/pedido-invalido',
       title: 'Pedido inválido',
       status: 400,
     });

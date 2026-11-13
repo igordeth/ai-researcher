@@ -27,24 +27,13 @@ const MENSAGEM_ERRO_GRAFO = 'Não foi possível concluir a resposta. Tente novam
 
 const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { graph }) => {
   app.post('/chat', async (request, reply) => {
-    const pedido = chatRequestSchema.safeParse(request.body);
-    if (!pedido.success) {
-      return reply
-        .code(400)
-        .type('application/problem+json')
-        .send({
-          type: 'about:blank',
-          title: 'Pedido inválido',
-          status: 400,
-          // O campo e a regra que falhou, sem repetir o valor enviado.
-          detail: pedido.error.issues
-            .map((issue) => `${issue.path.join('.') || 'corpo'}: ${issue.message}`)
-            .join('; '),
-        });
-    }
+    // Corpo inválido lança ZodError, e o error handler central responde 400 em problem+json.
+    const pedido = chatRequestSchema.parse(request.body);
 
     // Daqui em diante a resposta é escrita à mão, aos poucos. O hijack diz ao Fastify que não
-    // envie uma resposta própria quando o handler terminar.
+    // envie uma resposta própria quando o handler terminar. Por isso o erro do grafo, abaixo, não
+    // pode ir para o error handler central: o status 200 já foi enviado, e a falha só pode chegar
+    // ao cliente como um evento do próprio stream.
     reply.hijack();
     reply.raw.writeHead(200, {
       'Content-Type': 'text/event-stream; charset=utf-8',
@@ -62,10 +51,7 @@ const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { graph }) =
     }
 
     try {
-      const chunks = await graph.stream(
-        { question: pedido.data.question },
-        { streamMode: 'updates' },
-      );
+      const chunks = await graph.stream({ question: pedido.question }, { streamMode: 'updates' });
       for await (const chunk of chunks) {
         // O cliente foi embora: sair do for await fecha o stream, e o grafo não segue para os
         // nós seguintes (cada um pode custar uma chamada ao LLM).
