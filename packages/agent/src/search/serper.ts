@@ -1,10 +1,9 @@
 import { z } from 'zod';
 
+import { pedirJson } from './pedir-json.js';
 import { SearchProviderError, type SearchProvider, type SearchResult } from './types.js';
 
 const URL_SERPER = 'https://google.serper.dev/search';
-// Sem timeout, um provider lento penduraria a pergunta inteira em vez de falhar.
-const TIMEOUT_MS = 10_000;
 
 // Só os campos que usamos (https://serper.dev). A resposta de uma API externa é fronteira, por isso
 // é validada em vez de confiada com `as`. Alguns resultados vêm sem snippet; nesse caso, vira ''.
@@ -17,28 +16,16 @@ const respostaSerperSchema = z.object({
 export function makeSerperProvider(apiKey: string): SearchProvider {
   return {
     async search(query: string): Promise<SearchResult[]> {
-      let response: Response;
-      try {
-        response = await fetch(URL_SERPER, {
-          method: 'POST',
-          headers: { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ q: query }),
-          signal: AbortSignal.timeout(TIMEOUT_MS),
-        });
-      } catch (erro) {
-        // Timeout (AbortSignal) ou falha de rede: não houve resposta HTTP.
-        throw new SearchProviderError('Serper', 'sem resposta (timeout ou rede)', undefined, {
-          cause: erro,
-        });
-      }
+      // Com timeout de 10 s: ver pedir-json.ts.
+      const corpo = await pedirJson('Serper', URL_SERPER, {
+        method: 'POST',
+        headers: { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: query }),
+      });
 
-      if (!response.ok) {
-        throw new SearchProviderError('Serper', `respondeu ${response.status}`, response.status);
-      }
-
-      const resultado = respostaSerperSchema.safeParse(await response.json());
+      const resultado = respostaSerperSchema.safeParse(corpo);
       if (!resultado.success) {
-        throw new SearchProviderError('Serper', 'resposta fora do formato esperado', undefined, {
+        throw new SearchProviderError('Serper', 'formato', 'resposta fora do formato esperado', {
           cause: resultado.error,
         });
       }
