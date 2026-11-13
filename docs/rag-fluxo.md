@@ -478,7 +478,7 @@ Ou a página fica inteira com os chunks novos, ou fica como estava. Uma página 
 #### Falhas: a página cai, o nó continua
 
 - Cada página roda em `Promise.allSettled`. Uma que falhe (fora do ar, timeout, PDF, sem texto, mais de 2 MB) **fica de fora**, e as outras são gravadas.
-- A **falha do próprio provider de busca propaga**: sem resultados, não há o que gravar, e a forma de degradar fica com quem monta o grafo (Bloco E).
+- A **falha da busca de uma query não derruba o nó**: a query fica de fora e o nó segue para a próxima. Se nenhuma render nada, o nó não grava nada, o `retrieve` volta com o que já havia, o guard corta o laço e o `answer` responde com o corpus, avisando que o contexto pode estar incompleto. Só o `SearchProviderError` é absorvido; outro erro é bug e propaga.
 - Uma página que aparece em várias queries é processada **uma vez** por execução.
 
 #### A busca combinada no `retrieve`

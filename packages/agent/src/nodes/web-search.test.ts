@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { LinhaDocumentoWeb } from '../db/replace-web-page.js';
-import type { SearchResult } from '../search/types.js';
+import { SearchProviderError, type SearchResult } from '../search/types.js';
 import { makeWebSearchNode, montarQueries, type WebSearchDeps } from './web-search.js';
 
 const AGORA = new Date('2026-11-12T10:00:00.000Z');
@@ -156,12 +156,39 @@ describe('makeWebSearchNode', () => {
     );
   });
 
-  it('propaga a falha do provider de busca, porque sem resultados não há o que gravar', async () => {
-    const search = vi.fn().mockRejectedValue(new Error('Serper fora do ar'));
+  it('se a busca de uma query falha, segue para a próxima e grava o que ela trouxer', async () => {
+    const search = vi
+      .fn()
+      .mockRejectedValueOnce(new SearchProviderError('Serper', 'http', 'respondeu 503'))
+      .mockResolvedValueOnce([resultado(2)]);
+    const { deps, gravadas } = depsFake({ searchProvider: { search } });
+
+    await makeWebSearchNode(deps)({ question: 'q', missingAspects: ['a', 'b'] });
+
+    expect(search).toHaveBeenCalledTimes(2);
+    expect([...gravadas.keys()]).toEqual(['https://exemplo.com/2']);
+  });
+
+  it('com a busca a falhar em todas as queries, não grava nada e não lança erro', async () => {
+    const search = vi
+      .fn()
+      .mockRejectedValue(new SearchProviderError('Serper', 'circuito-aberto', 'circuito aberto'));
+    const { deps } = depsFake({ searchProvider: { search } });
+
+    await expect(
+      makeWebSearchNode(deps)({ question: 'q', missingAspects: ['a', 'b'] }),
+    ).resolves.toEqual({});
+    expect(search).toHaveBeenCalledTimes(2);
+    expect(deps.buscarPagina).not.toHaveBeenCalled();
+    expect(deps.gravarPagina).not.toHaveBeenCalled();
+  });
+
+  it('propaga o erro que não é falha da busca: um bug não fica escondido', async () => {
+    const search = vi.fn().mockRejectedValue(new TypeError('cannot read properties of undefined'));
     const { deps } = depsFake({ searchProvider: { search } });
 
     await expect(makeWebSearchNode(deps)({ question: 'q', missingAspects: [] })).rejects.toThrow(
-      'Serper fora do ar',
+      TypeError,
     );
   });
 });

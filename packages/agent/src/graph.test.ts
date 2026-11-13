@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { LinhaDocumentoWeb } from './db/replace-web-page.js';
 import type { DocumentoCvm, DocumentoWeb, RetrievedDoc } from './db/retrieve-similar.js';
 import { buildGraph, MAX_ITERATIONS, type GraphDeps } from './graph.js';
+import { SearchProviderError } from './search/types.js';
 
 const documentoCvm: DocumentoCvm = {
   origem: 'cvm',
@@ -145,6 +146,39 @@ describe('buildGraph', () => {
     expect(estadoFinal.finalAnswer).toContain('R$ 56,7 bilhões [VALE3 3T25]');
     expect(estadoFinal.finalAnswer).toContain(
       'Fontes:\n- [VALE3 3T25] Vale S.A., data-base 30/09/2025',
+    );
+  });
+
+  it('com a busca na web sempre a falhar, termina no answer com uma resposta só do corpus', async () => {
+    const { deps } = depsFake([INSUFICIENTE]);
+    // Serper fora do ar em todas as chamadas, como com o circuito aberto.
+    const search = vi
+      .fn()
+      .mockRejectedValue(new SearchProviderError('Serper', 'sem-resposta', 'timeout'));
+    const gravarPagina = vi.fn();
+    // O tipo diz que invoke recebe o prompt, para o teste o ler em mock.calls.
+    const answerInvoke = vi.fn<(prompt: string) => Promise<{ text: string }>>(async () => ({
+      text: 'Não encontrei o motivo da queda. A receita da Vale foi de R$ 56,7 bilhões [VALE3 3T25].',
+    }));
+    deps.searchProvider = { search };
+    deps.gravarPagina = gravarPagina;
+    deps.answerLlm = { invoke: answerInvoke };
+
+    const nos = await nosVisitados(deps);
+    const estadoFinal = await buildGraph(deps).invoke({ question: 'Por que a receita caiu?' });
+
+    // O laço corre até ao guard, de mãos vazias, e acaba no answer, sem o grafo rebentar.
+    expect(nos).toEqual(['retrieve', 'grade', 'webSearch', 'retrieve', 'grade', 'answer']);
+    expect(gravarPagina).not.toHaveBeenCalled();
+    expect(estadoFinal.iterations).toBe(MAX_ITERATIONS);
+    expect(estadoFinal.sufficient).toBe(false);
+    // O answer recebeu o pedido de avisar que o contexto é incompleto, e só tinha o corpus.
+    const [prompt] = answerInvoke.mock.calls[0];
+    expect(prompt).toContain('O contexto foi considerado incompleto');
+    expect(prompt).not.toContain('[web:');
+    expect(estadoFinal.finalAnswer).toBe(
+      'Não encontrei o motivo da queda. A receita da Vale foi de R$ 56,7 bilhões [VALE3 3T25].' +
+        '\n\nFontes:\n- [VALE3 3T25] Vale S.A., data-base 30/09/2025 (CVM)',
     );
   });
 });

@@ -1,5 +1,5 @@
 import type { LinhaDocumentoWeb } from '../db/replace-web-page.js';
-import type { SearchProvider, SearchResult } from '../search/types.js';
+import { SearchProviderError, type SearchProvider, type SearchResult } from '../search/types.js';
 import { dividirEmChunks } from '../web/chunk.js';
 import { extrairTexto } from '../web/extract.js';
 import type { PaginaBuscada } from '../web/fetch-page.js';
@@ -45,8 +45,9 @@ export function montarQueries({ question, missingAspects }: WebSearchState): str
  * `retrieve`, na volta seguinte do laço, encontra os chunks pela mesma busca por similaridade.
  *
  * Página que falhe (fora do ar, timeout, não-HTML, sem texto) fica de fora, e as outras seguem.
- * Falha do próprio provider de busca propaga: sem resultados, não há o que gravar, e a decisão de
- * como degradar fica com quem monta o grafo.
+ * Query cuja busca falhe (provider fora do ar, circuito aberto) também fica de fora. Se nenhuma
+ * render nada, o nó não grava nada: o retrieve volta com o que já havia, o guard de iteração corta
+ * o laço, e o answer responde com o corpus, avisando que o contexto pode estar incompleto.
  */
 export function makeWebSearchNode({
   searchProvider,
@@ -96,7 +97,17 @@ export function makeWebSearchNode({
     const urlsVistos = new Set<string>();
 
     for (const query of montarQueries(state)) {
-      const resultados = (await searchProvider.search(query))
+      let encontrados: SearchResult[];
+      try {
+        encontrados = await searchProvider.search(query);
+      } catch (erro) {
+        // A busca na web é enriquecimento: sem ela, a resposta sai só do corpus da CVM. Só a falha
+        // da busca é absorvida (SearchProviderError); outro erro é bug e continua a propagar.
+        if (erro instanceof SearchProviderError) continue;
+        throw erro;
+      }
+
+      const resultados = encontrados
         .slice(0, RESULTADOS_POR_QUERY)
         .filter((resultado) => !urlsVistos.has(resultado.url));
       for (const resultado of resultados) urlsVistos.add(resultado.url);
