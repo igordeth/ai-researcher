@@ -1,21 +1,26 @@
 import { modoDemoAtivo } from '../demo/modo-demo.js';
 import { makeDemoSearchProvider } from '../demo/search-provider-demo.js';
 import { makeGoogleCustomSearchProvider } from './google-custom-search.js';
+import { comResiliencia } from './resiliencia.js';
 import { makeSerperProvider } from './serper.js';
 import type { SearchProvider } from './types.js';
 
 export { SearchProviderError } from './types.js';
-export type { SearchProvider, SearchResult } from './types.js';
+export type { MotivoFalhaBusca, SearchProvider, SearchResult } from './types.js';
 
 /**
  * Cria o provider de busca indicado por SEARCH_PROVIDER (padrão: serper), com as chaves vindas de
  * variáveis de ambiente. Falha na hora, com mensagem clara, se a configuração estiver incompleta:
  * melhor o serviço não arrancar do que descobrir a chave em falta na primeira pergunta.
  *
+ * Os providers reais saem envolvidos em comResiliencia (retry, backoff e circuit breaker). Chame
+ * uma vez, na montagem da aplicação: o estado do circuito vive na instância devolvida.
+ *
  * Com DEMO=true, devolve o provider de fixtures e nenhuma chave é exigida. Os providers reais não
  * sabem que o modo demo existe: a troca acontece só aqui.
  */
 export function criarSearchProvider(): SearchProvider {
+  // Sem resiliência: as fixtures não usam rede, não há o que proteger.
   if (modoDemoAtivo()) return makeDemoSearchProvider();
 
   const provider = process.env.SEARCH_PROVIDER ?? 'serper';
@@ -25,7 +30,7 @@ export function criarSearchProvider(): SearchProvider {
     if (!apiKey) {
       throw new Error('SEARCH_PROVIDER=serper exige SERPER_API_KEY. Ver .env.example.');
     }
-    return makeSerperProvider(apiKey);
+    return comResiliencia(makeSerperProvider(apiKey), { nome: 'Serper' });
   }
 
   if (provider === 'google') {
@@ -37,7 +42,9 @@ export function criarSearchProvider(): SearchProvider {
       if (!cx) emFalta.push('GOOGLE_CUSTOM_SEARCH_CX');
       throw new Error(`SEARCH_PROVIDER=google exige ${emFalta.join(' e ')}. Ver .env.example.`);
     }
-    return makeGoogleCustomSearchProvider(apiKey, cx);
+    return comResiliencia(makeGoogleCustomSearchProvider(apiKey, cx), {
+      nome: 'Google Custom Search',
+    });
   }
 
   throw new Error(`SEARCH_PROVIDER desconhecido: "${provider}". Use "serper" ou "google".`);

@@ -59,6 +59,26 @@ describe('criarSearchProvider', () => {
     expect(() => criarSearchProvider()).toThrow(/exige GOOGLE_CUSTOM_SEARCH_CX\./);
   });
 
+  it('envolve o Serper em retry: um 503 seguido de 200 devolve os resultados', async () => {
+    vi.stubEnv('SERPER_API_KEY', 'k');
+    // Só o setTimeout é falso: a espera de 500 ms do backoff passa sem esperar de verdade.
+    vi.useFakeTimers({ toFake: ['setTimeout'] });
+    const fetchFake = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('', { status: 503 }))
+      .mockResolvedValueOnce(
+        Response.json({ organic: [{ title: 't', link: 'https://a.com', snippet: 's' }] }),
+      );
+    vi.stubGlobal('fetch', fetchFake);
+
+    const busca = criarSearchProvider().search('x');
+    await vi.advanceTimersByTimeAsync(500);
+
+    expect(await busca).toEqual([{ title: 't', snippet: 's', url: 'https://a.com' }]);
+    expect(fetchFake).toHaveBeenCalledTimes(2);
+    vi.useRealTimers();
+  });
+
   it('com DEMO=true usa as fixtures, sem chave e sem rede', async () => {
     vi.stubEnv('DEMO', 'true');
     const fetchFake = vi.fn();
