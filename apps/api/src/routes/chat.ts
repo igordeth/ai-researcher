@@ -19,13 +19,15 @@ export interface GraphLike {
 }
 
 export interface ChatRouteOptions {
-  graph: GraphLike;
+  // Uma função, e não o grafo pronto: o grafo real só é construído no primeiro pedido, e o mesmo
+  // getGraph é partilhado com o /mcp, para as duas rotas usarem a mesma instância.
+  getGraph: () => Promise<GraphLike>;
 }
 
 // Mensagem fixa para o cliente: o erro real (de rede, do LLM, da base) só vai para o log.
 const MENSAGEM_ERRO_GRAFO = 'Não foi possível concluir a resposta. Tente novamente.';
 
-const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { graph }) => {
+const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { getGraph }) => {
   app.post('/chat', async (request, reply) => {
     // Corpo inválido lança ZodError, e o error handler central responde 400 em problem+json.
     const pedido = chatRequestSchema.parse(request.body);
@@ -51,6 +53,9 @@ const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { graph }) =
     }
 
     try {
+      // Dentro do try: se a construção do grafo falhar (variável em falta, por exemplo), o cliente
+      // recebe o evento de erro como qualquer outra falha do grafo.
+      const graph = await getGraph();
       const chunks = await graph.stream({ question: pedido.question }, { streamMode: 'updates' });
       for await (const chunk of chunks) {
         // O cliente foi embora: sair do for await fecha o stream, e o grafo não segue para os

@@ -2,19 +2,21 @@ import { describe, expect, it } from 'vitest';
 import { SearchProviderError } from '@hero/agent';
 import { chatRequestSchema, problemDetailsSchema } from '@hero/contracts';
 
-import { build } from './app.js';
-import type { GraphLike } from './routes/chat.js';
+import { build, type GrafoDaApi } from './app.js';
 
 // O grafo não chega a correr nestes testes: só existe para o /api/chat ser registado.
-const grafoParado: GraphLike = {
+const grafoParado: GrafoDaApi = {
   stream: async () => {
+    throw new Error('o grafo não devia correr');
+  },
+  invoke: async () => {
     throw new Error('o grafo não devia correr');
   },
 };
 
 /** A app real, com rotas de teste que lançam cada tipo de erro, como uma rota de verdade faria. */
 function appComRotasQueFalham() {
-  const app = build({ checkDatabase: async () => true, graph: grafoParado });
+  const app = build({ checkDatabase: async () => true, getGraph: async () => grafoParado });
   app.get('/teste/zod', async () => chatRequestSchema.parse({}));
   app.get('/teste/circuito', async () => {
     throw new SearchProviderError('Serper', 'circuito-aberto', 'circuito aberto');

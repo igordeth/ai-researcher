@@ -57,8 +57,17 @@ function grafoFake(chunks: GraphChunk[], erroDepoisDe?: number) {
   return { graph, stream };
 }
 
+// Estes testes só exercitam o /chat, que usa stream. O invoke existe porque o mesmo grafo serve o
+// /mcp; aqui não deve ser chamado.
+async function invokeNaoUsado(): Promise<{ finalAnswer: string }> {
+  throw new Error('o /chat não usa invoke');
+}
+
 function appCom(graph: GraphLike) {
-  return build({ checkDatabase: async () => true, graph });
+  return build({
+    checkDatabase: async () => true,
+    getGraph: async () => ({ stream: graph.stream, invoke: invokeNaoUsado }),
+  });
 }
 
 /** Lê o corpo SSE de volta para eventos: cada evento é uma linha `data: {json}` e uma em branco. */
@@ -188,6 +197,26 @@ describe('POST /api/chat', () => {
     expect(lerEventos(response.body)).toEqual([
       { type: 'error', message: 'Não foi possível concluir a resposta. Tente novamente.' },
     ]);
+  });
+
+  it('escreve o evento de erro quando a construção do grafo falha (configuração em falta)', async () => {
+    const app = build({
+      checkDatabase: async () => true,
+      getGraph: async () => {
+        throw new Error('MODEL_ANSWER não definida');
+      },
+    });
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/chat',
+      payload: { question: 'q' },
+    });
+
+    expect(lerEventos(response.body)).toEqual([
+      { type: 'error', message: 'Não foi possível concluir a resposta. Tente novamente.' },
+    ]);
+    expect(response.body).not.toContain('MODEL_ANSWER');
   });
 
   it.each([
