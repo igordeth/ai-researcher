@@ -4,3 +4,5 @@ export { buildGraph, MAX_ITERATIONS, type GraphDeps, type ResearchStateValue } f
 export type { DocumentoCvm, DocumentoWeb, RetrievedDoc } from './db/retrieve-similar.js';
 // A API mapeia a falha da busca (por exemplo, o circuito aberto) para um status HTTP.
 export { SearchProviderError, type MotivoFalhaBusca } from './search/types.js';
+// O grafo com as dependências reais, construído na primeira chamada. O MCP e a API usam o mesmo.
+export { obterGrafoReal, type ResearchGraph } from './grafo-real.js';
