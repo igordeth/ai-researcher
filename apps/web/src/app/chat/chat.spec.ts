@@ -75,7 +75,29 @@ describe('Chat', () => {
       const disclaimer = elemento.querySelector('.disclaimer');
 
       expect(disclaimer?.getAttribute('role')).toBe('note');
-      expect(disclaimer?.textContent).toContain('não recomendação de investimento');
+      expect(disclaimer?.textContent?.trim()).toBe(
+        'Este assistente apresenta informações públicas, não recomendação de investimento.',
+      );
+    });
+
+    // Restrição regulatória (CLAUDE.md): o aviso é fixo no layout, não um modal dispensável.
+    it('o disclaimer fica entre o cabeçalho e a conversa, sem botão para o fechar', () => {
+      const disclaimer = elemento.querySelector('.disclaimer');
+
+      expect(disclaimer?.previousElementSibling?.matches('header.nav')).toBe(true);
+      expect(disclaimer?.nextElementSibling?.querySelector('section.mensagens')).not.toBeNull();
+      expect(disclaimer?.querySelector('button')).toBeNull();
+    });
+
+    it('o disclaimer continua visível durante uma resposta em curso', async () => {
+      busy.set(true);
+      messages.set([
+        { id: 1, role: 'user', text: 'Qual a receita da Vale?' },
+        { id: 2, role: 'assistant', status: 'revealing', text: 'A receita' },
+      ]);
+      await fixture.whenStable();
+
+      expect(elemento.querySelector('.disclaimer')).not.toBeNull();
     });
 
     it('começa com a área de mensagens vazia, anunciada a leitores de tela', () => {
