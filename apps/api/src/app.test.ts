@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { build, type GrafoDaApi } from './app.js';
+import type { GrafoPerguntavel } from '@hero/mcp-server';
+import { build } from './app.js';
+import type { GraphLike } from './routes/chat.js';
 
 describe('GET /api/health', () => {
   it('responde ok quando o banco está saudável', async () => {
@@ -22,9 +24,9 @@ describe('GET /api/health', () => {
 });
 
 describe('/api/chat e /api/mcp na mesma app', () => {
-  // Um grafo fake com as duas faces: stream para o /chat, invoke para o /mcp.
+  // Um grafo fake com as duas faces, como o grafo real: stream para o /chat, invoke para o /mcp.
   function grafoFake() {
-    const grafo: GrafoDaApi = {
+    const grafo: GraphLike & GrafoPerguntavel = {
       stream: vi.fn(async () =>
         (async function* () {
           yield { answer: { finalAnswer: 'resposta do chat' } };
@@ -49,7 +51,11 @@ describe('/api/chat e /api/mcp na mesma app', () => {
 
   it('o gateway /api/mcp responde a tool perguntar na mesma porta do /api/chat', async () => {
     const { getGraph } = grafoFake();
-    const app = build({ checkDatabase: async () => true, getGraph });
+    const app = build({
+      checkDatabase: async () => true,
+      getChatGraph: getGraph,
+      getMcpGraph: getGraph,
+    });
 
     const response = await app.inject({
       method: 'POST',
@@ -62,9 +68,13 @@ describe('/api/chat e /api/mcp na mesma app', () => {
     expect(response.json().result.content).toEqual([{ type: 'text', text: 'resposta do mcp' }]);
   });
 
-  it('as duas rotas usam o mesmo getGraph, e por isso a mesma instância do grafo', async () => {
+  it('com a mesma função nas duas opções, as duas rotas usam a mesma instância do grafo', async () => {
     const { grafo, getGraph } = grafoFake();
-    const app = build({ checkDatabase: async () => true, getGraph });
+    const app = build({
+      checkDatabase: async () => true,
+      getChatGraph: getGraph,
+      getMcpGraph: getGraph,
+    });
 
     await app.inject({ method: 'POST', url: '/api/chat', payload: { question: 'q' } });
     await app.inject({
@@ -82,14 +92,14 @@ describe('/api/chat e /api/mcp na mesma app', () => {
   });
 
   it('o GET em /api/mcp responde 405, sem sessão', async () => {
-    const app = build({ checkDatabase: async () => true, getGraph: grafoFake().getGraph });
+    const app = build({ checkDatabase: async () => true, getMcpGraph: grafoFake().getGraph });
 
     const response = await app.inject({ method: 'GET', url: '/api/mcp' });
 
     expect(response.statusCode).toBe(405);
   });
 
-  it('sem getGraph, nem /api/chat nem /api/mcp existem', async () => {
+  it('sem getChatGraph nem getMcpGraph, nem /api/chat nem /api/mcp existem', async () => {
     const app = build({ checkDatabase: async () => true });
 
     const chat = await app.inject({ method: 'POST', url: '/api/chat', payload: { question: 'q' } });

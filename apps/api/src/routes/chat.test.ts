@@ -57,17 +57,9 @@ function grafoFake(chunks: GraphChunk[], erroDepoisDe?: number) {
   return { graph, stream };
 }
 
-// Estes testes só exercitam o /chat, que usa stream. O invoke existe porque o mesmo grafo serve o
-// /mcp; aqui não deve ser chamado.
-async function invokeNaoUsado(): Promise<{ finalAnswer: string }> {
-  throw new Error('o /chat não usa invoke');
-}
-
+// Só o /chat é registado: o grafo fake precisa apenas do stream.
 function appCom(graph: GraphLike) {
-  return build({
-    checkDatabase: async () => true,
-    getGraph: async () => ({ stream: graph.stream, invoke: invokeNaoUsado }),
-  });
+  return build({ checkDatabase: async () => true, getChatGraph: async () => graph });
 }
 
 /** Lê o corpo SSE de volta para eventos: cada evento é uma linha `data: {json}` e uma em branco. */
@@ -202,7 +194,7 @@ describe('POST /api/chat', () => {
   it('escreve o evento de erro quando a construção do grafo falha (configuração em falta)', async () => {
     const app = build({
       checkDatabase: async () => true,
-      getGraph: async () => {
+      getChatGraph: async () => {
         throw new Error('MODEL_ANSWER não definida');
       },
     });

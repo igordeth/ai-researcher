@@ -18,10 +18,15 @@ export interface GraphLike {
   ): Promise<AsyncIterable<GraphChunk>>;
 }
 
+/**
+ * Como a rota obtém o grafo. Uma função, e não o grafo pronto: o grafo real só é construído no
+ * primeiro pedido, e a API sobe sem tocar a base nem a Vertex AI. É o mesmo desenho do GetGraph do
+ * @hero/mcp-server.
+ */
+export type GetGraph = () => Promise<GraphLike>;
+
 export interface ChatRouteOptions {
-  // Uma função, e não o grafo pronto: o grafo real só é construído no primeiro pedido, e o mesmo
-  // getGraph é partilhado com o /mcp, para as duas rotas usarem a mesma instância.
-  getGraph: () => Promise<GraphLike>;
+  getGraph: GetGraph;
 }
 
 // Mensagem fixa para o cliente: o erro real (de rede, do LLM, da base) só vai para o log.
