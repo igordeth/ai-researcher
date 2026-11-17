@@ -1,0 +1,39 @@
+<header class="nav">
+  <span class="wordmark">AI RESEARCHER</span>
+  <span class="tag">B3 · CVM</span>
+</header>
+
+<!-- Fixo no layout: não fecha, não rola com a conversa, não some durante o streaming. -->
+<p class="disclaimer" role="note">
+  <svg
+    class="disclaimer__icone"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="9"></circle>
+    <line x1="12" y1="11" x2="12" y2="16.5"></line>
+    <circle cx="12" cy="7.5" r="0.9" fill="currentColor" stroke="none"></circle>
+  </svg>
+  Este assistente apresenta informações públicas, não recomendação de investimento.
+</p>
+
+<section class="mensagens" aria-label="Conversa" aria-live="polite"></section>
+
+<form class="composer" (submit)="aoEnviar($event)">
+  <label class="visualmente-oculto" for="pergunta">Pergunta</label>
+  <input
+    id="pergunta"
+    class="composer__input"
+    type="text"
+    autocomplete="off"
+    placeholder="Pergunte sobre indicadores financeiros de uma empresa da B3…"
+    [value]="pergunta()"
+    (input)="aoDigitar($event)"
+  />
+  <button class="composer__enviar" type="submit" [disabled]="!podeEnviar()">Enviar</button>
+</form>

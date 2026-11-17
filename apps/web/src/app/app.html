@@ -1,11 +1,1 @@
-<main>
-  <h1>AI Researcher</h1>
-
-  @if (health.isLoading()) {
-  <p>Consultando /api/health...</p>
-  } @else if (health.error()) {
-  <p>Não foi possível consultar /api/health.</p>
-  } @else if (health.value(); as value) {
-  <p>status: {{ value.status }} · database: {{ value.database }}</p>
-  }
-</main>
+<app-chat />

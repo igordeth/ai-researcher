@@ -1,0 +1,109 @@
+// Medidas do protótipo (docs/design/prototype/ai-researcher-chat.dc.html); cores só por token.
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.nav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.tag {
+  margin-left: 10px;
+  padding: 3px 9px;
+  border: 1px solid var(--cyan-dim);
+  border-radius: var(--radius-pill);
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.disclaimer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 9px 24px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.disclaimer__icone {
+  flex-shrink: 0;
+  // Ícone, não texto: --cyan-dim sobre --surface-2 (4,25:1) só é permitido em borda e ícone.
+  color: var(--cyan-dim);
+}
+
+.mensagens {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.composer {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.composer__input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+// O único uso de --lime: o botão de envio ativo.
+.composer__enviar {
+  padding: 11px 22px;
+  background: var(--lime);
+  border: none;
+  border-radius: var(--radius-control);
+  color: var(--on-lime);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:disabled {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    cursor: default;
+  }
+}
