@@ -1,1 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+// Tokens de design do AI Researcher (ver .claude/skills/frontend-design). Este é o único lugar
+// com valores de cor: os componentes usam só var(--...).
+//
+// Regra de domínio: nunca verde nem vermelho em dado financeiro ou estado do pipeline. Em finanças
+// essas cores dizem alta e queda, compra e venda, e o sistema informa, nunca recomenda. Ciano é a
+// única cor de estado; o lima é só o botão de envio ativo.
+:root {
+  // Superfícies, da mais funda para a mais alta
+  --bg: #080909; // fundo geral; quase preto, não #000, para evitar banding
+  --surface: #141517; // nav, mensagem do assistente, painel do pipeline
+  --surface-2: #1c1e21; // disclaimer, mensagem do usuário, input, painel de citação
+  --border: #2b2e32; // divisórias e bordas; decorativo (1,34:1), não marca foco
+
+  // Texto
+  --text: #f2f3f4; // texto principal e todos os números
+  --text-muted: #95999e; // legendas, labels secundárias, disclaimer
+
+  // Ciano: a única cor de estado
+  --cyan: #14fefe; // accent, links, citações, estado em execução e concluído, fallback
+  --cyan-dim: #0d8f8f; // bordas e ícones em accent; texto só sobre --surface ou --bg (4,65:1)
+  --cyan-tint: rgba(20, 254, 254, 0.1); // fundo de estado ativo e do aviso de fallback
+  --cyan-hover: #7cffff; // hover de link
+  --on-cyan: #04201f; // texto sobre fundo --cyan
+
+  // Lima: só o botão de envio ativo
+  --lime: #a3ea1f;
+  --on-lime: #0a1400; // texto sobre --lime
+
+  // Tipografia
+  --font-display: 'Anton', sans-serif; // só o wordmark
+  --font-body: 'Poppins', sans-serif; // todo o resto
+
+  // Raio
+  --radius-card: 10px; // mensagens
+  --radius-panel: 8px; // painel de citação, aviso de fallback
+  --radius-control: 6px; // botões, input
+  --radius-pill: 999px; // tags, citações, círculos do pipeline
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+a {
+  color: var(--cyan);
+
+  &:hover {
+    color: var(--cyan-hover);
+  }
+}
+
+// Foco visível em todo controle. A borda (--border) é decorativa e não chega para marcar foco.
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+// Texto só para leitores de tela, como o label do input da pergunta.
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
