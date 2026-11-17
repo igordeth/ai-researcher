@@ -14,6 +14,9 @@
     "@hero/agent": "workspace:*",
     "@hero/contracts": "workspace:*",
     "@hero/mcp-server": "workspace:*",
+    "@langfuse/otel": "6.1.1",
+    "@opentelemetry/api": "1.9.1",
+    "@opentelemetry/sdk-node": "0.223.0",
     "fastify": "5.11.2",
     "pg": "8.22.0"
   },

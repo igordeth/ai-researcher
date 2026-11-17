@@ -6,3 +6,5 @@ export type { DocumentoCvm, DocumentoWeb, RetrievedDoc } from './db/retrieve-sim
 export { SearchProviderError, type MotivoFalhaBusca } from './search/types.js';
 // O grafo com as dependências reais, construído na primeira chamada. O MCP e a API usam o mesmo.
 export { obterGrafoReal, type ResearchGraph } from './grafo-real.js';
+// O trace de uma pergunta na Langfuse, aberto por quem recebe a pergunta (a rota /chat, a tool MCP).
+export { rastrearPergunta, type CanalPergunta } from './tracing.js';

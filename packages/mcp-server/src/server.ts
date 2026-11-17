@@ -1,4 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { rastrearPergunta } from '@hero/agent';
 import { QUESTION_MAX_LENGTH } from '@hero/contracts';
 import { z } from 'zod';
 
@@ -72,9 +73,13 @@ export function criarServidorMcp({
     },
     async ({ pergunta }) => {
       try {
-        const grafo = await getGraph();
-        // finalAnswer já vem citada e filtrada pelo guardrail do nó answer.
-        const { finalAnswer } = await grafo.invoke({ question: pergunta });
+        // Um trace da Langfuse por chamada da tool, com a tag mcp para separar do chat.
+        const finalAnswer = await rastrearPergunta(pergunta, 'mcp', async () => {
+          const grafo = await getGraph();
+          // finalAnswer já vem citada e filtrada pelo guardrail do nó answer.
+          const resultado = await grafo.invoke({ question: pergunta });
+          return resultado.finalAnswer;
+        });
         return { content: [{ type: 'text', text: finalAnswer }] };
       } catch (erro) {
         // Degradação graciosa: a falha vira um resultado de erro da tool, que o cliente sabe

@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
+import { rastrearPergunta } from '@hero/agent';
 import { chatRequestSchema, type ChatEvent } from '@hero/contracts';
 import { criarTradutorDeEventos, formatarEventoSse, type GraphChunk } from './chat-event.js';
 
@@ -53,16 +54,23 @@ const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { getGraph }
     }
 
     try {
-      // Dentro do try: se a construção do grafo falhar (variável em falta, por exemplo), o cliente
-      // recebe o evento de erro como qualquer outra falha do grafo.
-      const graph = await getGraph();
-      const chunks = await graph.stream({ question: pedido.question }, { streamMode: 'updates' });
-      for await (const chunk of chunks) {
-        // O cliente foi embora: sair do for await fecha o stream, e o grafo não segue para os
-        // nós seguintes (cada um pode custar uma chamada ao LLM).
-        if (reply.raw.destroyed) break;
-        for (const evento of traduzir(chunk)) escrever(evento);
-      }
+      // Um trace da Langfuse por pergunta, com o grafo aninhado dentro: o stream é consumido
+      // aqui dentro para que cada nó fique sob a mesma raiz.
+      await rastrearPergunta(pedido.question, 'chat', async () => {
+        // Dentro do try: se a construção do grafo falhar (variável em falta, por exemplo), o
+        // cliente recebe o evento de erro como qualquer outra falha do grafo.
+        const graph = await getGraph();
+        const chunks = await graph.stream({ question: pedido.question }, { streamMode: 'updates' });
+        let respostaFinal: string | null = null;
+        for await (const chunk of chunks) {
+          // O cliente foi embora: sair do for await fecha o stream, e o grafo não segue para os
+          // nós seguintes (cada um pode custar uma chamada ao LLM).
+          if (reply.raw.destroyed) break;
+          if (chunk.answer) respostaFinal = chunk.answer.finalAnswer;
+          for (const evento of traduzir(chunk)) escrever(evento);
+        }
+        return respostaFinal;
+      });
     } catch (error) {
       // O status 200 já foi enviado: o erro chega ao cliente como um evento, e o detalhe fica no
       // log, sem vazar para fora. O processo continua de pé para os outros pedidos.

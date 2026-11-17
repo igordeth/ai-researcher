@@ -6,6 +6,9 @@ allowBuilds:
   '@parcel/watcher': true
   lmdb: true
   msgpackr-extract: true
+  # Vem dos exportadores gRPC do @opentelemetry/sdk-node, que a API não usa (a Langfuse exporta por
+  # HTTP). O postinstall só verifica versões: não é preciso para nada funcionar.
+  protobufjs: false
 minimumReleaseAgeExclude:
   - '@turbo/darwin-64@2.10.9'
   - '@turbo/darwin-arm64@2.10.9'
