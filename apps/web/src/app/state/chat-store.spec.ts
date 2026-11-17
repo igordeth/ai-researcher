@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { ChatError, ChatService, type GraphEvent } from '../api/chat.service';
 import { ChatStore, MENSAGEM_ERRO, REVEAL_INTERVAL_MS } from './chat-store';
+import { GraphStore } from './graph-store';
 
 const RESPOSTA = 'A receita foi de R$ 56,7 bilhões.';
 
@@ -120,6 +121,42 @@ describe('ChatStore', () => {
     expect(ask).toHaveBeenCalledTimes(1);
     expect(store.messages()).toHaveLength(2);
     continuar();
+  });
+
+  it('passa cada evento do stream ao GraphStore, a começar do retrieve', async () => {
+    const store = criarStore(
+      askQueEmite([
+        { type: 'retrieve', documents: [] },
+        { type: 'grade', sufficient: true, missingAspects: [], iterations: 1 },
+        { type: 'answer', answer: RESPOSTA },
+      ]),
+    );
+
+    await store.send('q');
+
+    expect(
+      TestBed.inject(GraphStore)
+        .steps()
+        .map((step) => [step.node, step.status]),
+    ).toEqual([
+      ['retrieve', 'done'],
+      ['grade', 'done'],
+      ['answer', 'done'],
+    ]);
+  });
+
+  it('com falha na chamada, interrompe a etapa do grafo em execução', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const store = criarStore(
+      askQueEmite([{ type: 'retrieve', documents: [] }], new ChatError('falhou')),
+    );
+
+    await store.send('q');
+
+    expect(TestBed.inject(GraphStore).steps().at(-1)).toMatchObject({
+      node: 'grade',
+      status: 'interrupted',
+    });
   });
 
   it('ao destruir, limpa o timer da revelação', async () => {

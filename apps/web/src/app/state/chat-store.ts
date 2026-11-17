@@ -1,6 +1,7 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
 
 import { ChatService } from '../api/chat.service';
+import { GraphStore } from './graph-store';
 import { tokenize } from './tokenize';
 
 /** Intervalo entre duas palavras na revelação da resposta. */
@@ -38,6 +39,9 @@ export type ChatMessage = UserMessage | AssistantMessage;
 @Injectable({ providedIn: 'root' })
 export class ChatStore {
   private readonly chatService = inject(ChatService);
+  // As etapas do grafo da pergunta em curso: o ChatStore lê o stream, e cada evento vai também
+  // para o painel do grafo.
+  private readonly graphStore = inject(GraphStore);
 
   private readonly _messages = signal<ChatMessage[]>([]);
   readonly messages = this._messages.asReadonly();
@@ -80,16 +84,19 @@ export class ChatStore {
 
     const abortController = new AbortController();
     this.abortController = abortController;
+    this.graphStore.start();
 
     try {
       for await (const event of this.chatService.ask(text, abortController.signal)) {
-        // retrieve, grade e webSearch são do painel do grafo; aqui só interessa a resposta.
+        this.graphStore.apply(event);
+        // retrieve, grade e webSearch só mexem no painel do grafo; a conversa espera a resposta.
         if (event.type === 'answer') this.reveal(assistantId, event.answer);
       }
     } catch (error) {
       // Abortado só acontece ao destruir o store: não há conversa onde mostrar o erro.
       if (abortController.signal.aborted) return;
       console.error('Falha na conversa com /api/chat', error);
+      this.graphStore.interrupt();
       this.stopReveal();
       this.updateAssistant(assistantId, 'error', MENSAGEM_ERRO);
     } finally {
