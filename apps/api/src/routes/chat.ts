@@ -1,16 +1,17 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { rastrearPergunta } from '@hero/agent';
+import { rastrearPergunta, type CallbacksDaPergunta } from '@hero/agent';
 import { chatRequestSchema, type ChatEvent } from '@hero/contracts';
 import { criarTradutorDeEventos, formatarEventoSse, type GraphChunk } from './chat-event.js';
 
 /**
- * Só o que a rota usa do grafo: o método stream em modo 'updates'. O grafo compilado do LangGraph
- * encaixa aqui sem adaptação, e o teste passa um fake sem LLM nem Postgres.
+ * Só o que a rota usa do grafo: o método stream em modo 'updates', com os callbacks do trace da
+ * pergunta. O grafo compilado do LangGraph encaixa aqui sem adaptação, e o teste passa um fake sem
+ * LLM nem Postgres.
  */
 export interface GraphLike {
   stream(
     input: { question: string },
-    options: { streamMode: 'updates' },
+    options: { streamMode: 'updates'; callbacks: CallbacksDaPergunta },
   ): Promise<AsyncIterable<GraphChunk>>;
 }
 
@@ -56,11 +57,14 @@ const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { getGraph }
     try {
       // Um trace da Langfuse por pergunta, com o grafo aninhado dentro: o stream é consumido
       // aqui dentro para que cada nó fique sob a mesma raiz.
-      await rastrearPergunta(pedido.question, 'chat', async () => {
+      await rastrearPergunta(pedido.question, 'chat', async (callbacks) => {
         // Dentro do try: se a construção do grafo falhar (variável em falta, por exemplo), o
         // cliente recebe o evento de erro como qualquer outra falha do grafo.
         const graph = await getGraph();
-        const chunks = await graph.stream({ question: pedido.question }, { streamMode: 'updates' });
+        const chunks = await graph.stream(
+          { question: pedido.question },
+          { streamMode: 'updates', callbacks },
+        );
         let respostaFinal: string | null = null;
         for await (const chunk of chunks) {
           // O cliente foi embora: sair do for await fecha o stream, e o grafo não segue para os

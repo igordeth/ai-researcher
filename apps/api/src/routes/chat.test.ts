@@ -98,7 +98,8 @@ describe('POST /api/chat', () => {
 
     expect(stream).toHaveBeenCalledWith(
       { question: 'Por que a receita da Vale caiu?' },
-      { streamMode: 'updates' },
+      // Sem o tracing registado (os testes não têm chaves da Langfuse), nenhum CallbackHandler.
+      { streamMode: 'updates', callbacks: [] },
     );
     expect(lerEventos(response.body)).toEqual([
       {

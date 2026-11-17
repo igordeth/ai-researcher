@@ -72,7 +72,8 @@ describe('mcpHttpPlugin', () => {
 
     expect(lista.json().result.tools.map((t: { name: string }) => t.name)).toEqual(['perguntar']);
     expect(chamada.json().result.content).toEqual([{ type: 'text', text: RESPOSTA }]);
-    expect(invoke).toHaveBeenCalledWith({ question: 'Receita da Vale?' });
+    // Sem o tracing registado (os testes não têm chaves da Langfuse), nenhum CallbackHandler.
+    expect(invoke).toHaveBeenCalledWith({ question: 'Receita da Vale?' }, { callbacks: [] });
   });
 
   it('com o grafo a falhar, devolve isError com a mensagem genérica, sem a exceção crua', async () => {

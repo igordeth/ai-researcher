@@ -1,8 +1,12 @@
-// Primeiro import, de propósito: o OpenTelemetry tem de estar ligado antes de o grafo correr.
-import { encerrarTracing } from './instrumentation.js';
-
-import { obterGrafoReal } from '@hero/agent';
+import { obterGrafoReal, registrarTracingLangfuse } from '@hero/agent';
 import { build } from './app.js';
+
+// Antes de o servidor aceitar pedidos: o primeiro /chat já tem para onde mandar o trace. Sem as
+// chaves da Langfuse, nada é registado e a API sobe igual.
+const encerrarTracing = registrarTracingLangfuse();
+if (!encerrarTracing) {
+  console.info('Langfuse desligada: LANGFUSE_PUBLIC_KEY ou LANGFUSE_SECRET_KEY não definida.');
+}
 
 // A mesma função nas duas rotas, e não uma por rota: obterGrafoReal é memoizada, então o /chat e o
 // /mcp recebem a mesma instância do grafo, com um só pool do Postgres, um só cliente da Vertex AI
@@ -21,7 +25,7 @@ async function encerrar(sinal: NodeJS.Signals): Promise<void> {
   app.log.info(`${sinal} recebido: a encerrar.`);
   try {
     await app.close();
-    await encerrarTracing();
+    await encerrarTracing?.();
     process.exit(0);
   } catch (erro) {
     app.log.error(erro, 'Falha ao encerrar');

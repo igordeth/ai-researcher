@@ -1,14 +1,18 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { rastrearPergunta } from '@hero/agent';
+import { rastrearPergunta, type CallbacksDaPergunta } from '@hero/agent';
 import { QUESTION_MAX_LENGTH } from '@hero/contracts';
 import { z } from 'zod';
 
 /**
- * Só o que a tool usa do grafo: invocar com a pergunta e ler a resposta final. O grafo compilado
- * do @hero/agent encaixa aqui sem adaptação, e o teste passa um fake sem Postgres nem Vertex AI.
+ * Só o que a tool usa do grafo: invocar com a pergunta, com os callbacks do trace da pergunta, e
+ * ler a resposta final. O grafo compilado do @hero/agent encaixa aqui sem adaptação, e o teste
+ * passa um fake sem Postgres nem Vertex AI.
  */
 export interface GrafoPerguntavel {
-  invoke(input: { question: string }): Promise<{ finalAnswer: string }>;
+  invoke(
+    input: { question: string },
+    options: { callbacks: CallbacksDaPergunta },
+  ): Promise<{ finalAnswer: string }>;
 }
 
 /**
@@ -74,10 +78,10 @@ export function criarServidorMcp({
     async ({ pergunta }) => {
       try {
         // Um trace da Langfuse por chamada da tool, com a tag mcp para separar do chat.
-        const finalAnswer = await rastrearPergunta(pergunta, 'mcp', async () => {
+        const finalAnswer = await rastrearPergunta(pergunta, 'mcp', async (callbacks) => {
           const grafo = await getGraph();
           // finalAnswer já vem citada e filtrada pelo guardrail do nó answer.
-          const resultado = await grafo.invoke({ question: pergunta });
+          const resultado = await grafo.invoke({ question: pergunta }, { callbacks });
           return resultado.finalAnswer;
         });
         return { content: [{ type: 'text', text: finalAnswer }] };

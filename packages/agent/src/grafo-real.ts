@@ -2,7 +2,6 @@ import { criarBuscarDemo } from './demo/buscar-demo.js';
 import { criarAnswerLlmDemo, criarGradeLlmDemo } from './demo/llm-demo.js';
 import { modoDemoAtivo } from './demo/modo-demo.js';
 import { buildGraph } from './graph.js';
-import { comTracing } from './tracing.js';
 import { criarAnswerLlm, criarGradeLlm } from './llm/clientes.js';
 import { criarSearchProvider } from './search/index.js';
 import { criarEmbeddings } from './seed/embeddings.js';
@@ -89,4 +88,4 @@ async function montarGrafoReal(): Promise<ResearchGraph> {
  * aparece como erro na primeira pergunta. O mesmo grafo serve a todas as perguntas do processo,
  * com um só pool de conexões e um só circuit breaker da busca.
  */
-export const obterGrafoReal = memoizarPromessa(async () => comTracing(await montarGrafoReal()));
+export const obterGrafoReal = memoizarPromessa(montarGrafoReal);

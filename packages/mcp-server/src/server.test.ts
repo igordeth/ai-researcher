@@ -77,7 +77,11 @@ describe('servidor MCP', () => {
 
     expect(resultado.isError).toBeFalsy();
     expect(textoDe(resultado)).toBe(RESPOSTA);
-    expect(invoke).toHaveBeenCalledWith({ question: 'Qual a receita da Vale no 3T25?' });
+    // Sem o tracing registado (os testes não têm chaves da Langfuse), nenhum CallbackHandler.
+    expect(invoke).toHaveBeenCalledWith(
+      { question: 'Qual a receita da Vale no 3T25?' },
+      { callbacks: [] },
+    );
   });
 
   it('só obtém o grafo na primeira chamada da tool, não ao subir nem ao listar', async () => {
