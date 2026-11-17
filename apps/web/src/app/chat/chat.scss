@@ -63,9 +63,164 @@
   overflow-y: auto;
 }
 
+// O texto livre (pergunta e resposta) guarda as quebras de linha: Shift+Enter na pergunta, listas
+// e parágrafos na resposta do LLM. Num span à parte, para o espaço do template não contar.
+.texto-livre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mensagem-usuario {
+  align-self: flex-end;
+  max-width: 62%;
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.mensagem-assistente {
+  align-self: flex-start;
+  max-width: 82%;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.mensagem-assistente__cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mensagem-assistente__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--cyan-dim);
+  border-radius: var(--radius-pill);
+  color: var(--cyan);
+}
+
+.mensagem-assistente__nome {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.mensagem-assistente__texto {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+// Marca a mensagem que ainda espera o answer ou o está a revelar.
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 15px;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: var(--cyan);
+  animation: piscar 0.9s step-end infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes piscar {
+  50% {
+    opacity: 0;
+  }
+}
+
+// Sem cor de alarme: o erro é texto neutro, com ícone (ver a regra de domínio da skill).
+.mensagem-assistente__erro {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.mensagem-assistente__erro-icone {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: var(--text-muted);
+}
+
+.fontes {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.fontes__titulo {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fontes__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fonte {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  font-size: 13px;
+}
+
+.fonte__rotulo {
+  font-weight: 600;
+}
+
+span.fonte__rotulo {
+  color: var(--text);
+}
+
+.fonte__data-base {
+  color: var(--text-muted);
+
+  strong {
+    color: var(--text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.fonte__origem {
+  color: var(--text-muted);
+}
+
 .composer {
   display: flex;
   flex-shrink: 0;
+  // O botão fica na base quando a textarea cresce, em vez de esticar com ela.
+  align-items: flex-end;
   gap: 10px;
   padding: 16px 24px;
   border-top: 1px solid var(--border);
@@ -81,6 +236,12 @@
   color: var(--text);
   font-family: var(--font-body);
   font-size: 14.5px;
+  line-height: 1.5;
+  // A textarea cresce com o texto (Shift+Enter) até um teto, e daí em diante rola. Onde o
+  // field-sizing não existe, fica com uma linha e rola desde o início.
+  field-sizing: content;
+  max-height: 160px;
+  resize: none;
 
   &::placeholder {
     color: var(--text-muted);

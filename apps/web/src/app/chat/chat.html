@@ -22,18 +22,99 @@
   Este assistente apresenta informações públicas, não recomendação de investimento.
 </p>
 
-<section class="mensagens" aria-label="Conversa" aria-live="polite"></section>
+<section class="mensagens" aria-label="Conversa" aria-live="polite">
+  @for (mensagem of mensagens(); track mensagem.id) { @if (mensagem.role === 'user') {
+  <p class="mensagem-usuario">
+    <span class="texto-livre">{{ mensagem.text }}</span>
+  </p>
+  } @else {
+  <!-- aria-busy: o leitor de tela espera o texto completo, em vez de ler palavra a palavra. -->
+  <article
+    class="mensagem-assistente"
+    [attr.data-estado]="mensagem.status"
+    [attr.aria-busy]="emAndamento(mensagem)"
+  >
+    <header class="mensagem-assistente__cabecalho">
+      <span class="mensagem-assistente__avatar" aria-hidden="true">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 5h16v11H9l-5 4z"></path>
+        </svg>
+      </span>
+      <span class="mensagem-assistente__nome">AI RESEARCHER</span>
+    </header>
 
-<form class="composer" (submit)="aoEnviar($event)">
+    @if (mensagem.status === 'error') {
+    <p class="mensagem-assistente__erro">
+      <svg
+        class="mensagem-assistente__erro-icone"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <path d="M12 3 2 20h20z"></path>
+        <line x1="12" y1="10" x2="12" y2="14"></line>
+        <circle cx="12" cy="17" r="0.9" fill="currentColor" stroke="none"></circle>
+      </svg>
+      {{ mensagem.parsed.body }}
+    </p>
+    } @else {
+    <p class="mensagem-assistente__texto">
+      <span class="texto-livre">{{ mensagem.parsed.body }}</span>
+      @if (emAndamento(mensagem)) {
+      <span class="cursor" aria-hidden="true"></span>
+      }
+    </p>
+
+    @if (mensagem.parsed.citations.length > 0) {
+    <div class="fontes">
+      <p class="fontes__titulo" [id]="'fontes-' + mensagem.id">Fontes</p>
+      <ul class="fontes__lista" [attr.aria-labelledby]="'fontes-' + mensagem.id">
+        @for (citacao of mensagem.parsed.citations; track $index) {
+        <li class="fonte">
+          @if (citacao.url) {
+          <a class="fonte__rotulo" [href]="citacao.url" target="_blank" rel="noopener noreferrer"
+            >{{ citacao.label }}</a
+          >
+          } @else {
+          <span class="fonte__rotulo">{{ citacao.label }}</span>
+          } @if (citacao.dataBase) {
+          <span class="fonte__data-base"> data-base <strong>{{ citacao.dataBase }}</strong> </span>
+          }
+          <span class="fonte__origem">{{ citacao.origin }}</span>
+        </li>
+        }
+      </ul>
+    </div>
+    } }
+  </article>
+  } }
+</section>
+
+<form class="composer" (submit)="aoSubmeter($event)">
   <label class="visualmente-oculto" for="pergunta">Pergunta</label>
-  <input
+  <textarea
     id="pergunta"
     class="composer__input"
-    type="text"
+    rows="1"
     autocomplete="off"
     placeholder="Pergunte sobre indicadores financeiros de uma empresa da B3…"
     [value]="pergunta()"
     (input)="aoDigitar($event)"
-  />
+    (keydown)="aoTeclar($event)"
+  ></textarea>
   <button class="composer__enviar" type="submit" [disabled]="!podeEnviar()">Enviar</button>
 </form>
