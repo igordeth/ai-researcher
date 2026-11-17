@@ -12,6 +12,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
+    "test:e2e": "pnpm --filter @hero/web run test:e2e",
     "lint": "turbo run lint && prettier --check .",
     "collect": "pnpm --filter @hero/corpus run collect",
     "seed": "pnpm --filter @hero/agent run seed",
