@@ -1,3 +1,4 @@
+import type { BaseCallbackHandler } from '@langchain/core/callbacks/base';
 import { CallbackHandler } from '@langfuse/langchain';
 import { propagateAttributes, startActiveObservation } from '@langfuse/tracing';
 
@@ -23,10 +24,11 @@ const NOME_TRACE = 'answer-question';
 export type CanalPergunta = 'chat' | 'mcp';
 
 /**
- * Os callbacks a passar ao graph.stream() ou ao graph.invoke() desta pergunta: um CallbackHandler
- * novo com o tracing ligado, ou nenhum sem ele.
+ * Os callbacks a passar ao graph.stream() ou ao graph.invoke() desta pergunta. O rastrearPergunta
+ * entrega um CallbackHandler da Langfuse novo com o tracing ligado, ou nenhum sem ele; o call site
+ * soma-lhe o das métricas (criarMetricsCallback). Daí o tipo ser o handler base do LangChain.
  */
-export type CallbacksDaPergunta = CallbackHandler[];
+export type CallbacksDaPergunta = BaseCallbackHandler[];
 
 /**
  * Abre o trace de uma pergunta e corre `executar` dentro dele, com um CallbackHandler novo para o

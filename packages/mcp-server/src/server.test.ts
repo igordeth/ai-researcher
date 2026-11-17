@@ -80,7 +80,7 @@ describe('servidor MCP', () => {
     // Sem o tracing registado (os testes não têm chaves da Langfuse), nenhum CallbackHandler.
     expect(invoke).toHaveBeenCalledWith(
       { question: 'Qual a receita da Vale no 3T25?' },
-      { callbacks: [] },
+      { callbacks: [expect.objectContaining({ name: 'metrics-callback' })] },
     );
   });
 

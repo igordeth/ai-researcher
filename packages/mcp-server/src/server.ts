@@ -1,10 +1,10 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { rastrearPergunta, type CallbacksDaPergunta } from '@hero/agent';
+import { criarMetricsCallback, rastrearPergunta, type CallbacksDaPergunta } from '@hero/agent';
 import { QUESTION_MAX_LENGTH } from '@hero/contracts';
 import { z } from 'zod';
 
 /**
- * Só o que a tool usa do grafo: invocar com a pergunta, com os callbacks do trace da pergunta, e
+ * Só o que a tool usa do grafo: invocar com a pergunta, com os callbacks da pergunta (trace e métricas), e
  * ler a resposta final. O grafo compilado do @hero/agent encaixa aqui sem adaptação, e o teste
  * passa um fake sem Postgres nem Vertex AI.
  */
@@ -81,7 +81,11 @@ export function criarServidorMcp({
         const finalAnswer = await rastrearPergunta(pergunta, 'mcp', async (callbacks) => {
           const grafo = await getGraph();
           // finalAnswer já vem citada e filtrada pelo guardrail do nó answer.
-          const resultado = await grafo.invoke({ question: pergunta }, { callbacks });
+          // As métricas somam-se aos callbacks da Langfuse no call site, como no /api/chat.
+          const resultado = await grafo.invoke(
+            { question: pergunta },
+            { callbacks: [...callbacks, criarMetricsCallback()] },
+          );
           return resultado.finalAnswer;
         });
         return { content: [{ type: 'text', text: finalAnswer }] };

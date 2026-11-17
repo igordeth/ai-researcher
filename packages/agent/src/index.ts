@@ -14,3 +14,7 @@ export {
   type CallbacksDaPergunta,
   type CanalPergunta,
 } from './tracing/rastrear-pergunta.js';
+// Métricas do Prometheus: o callback soma-se aos da Langfuse no call site do grafo, e o registry é
+// o que o /metrics vai expor.
+export { criarMetricsCallback } from './metricas/metrics-callback.js';
+export { registroMetricas } from './metricas/registro.js';

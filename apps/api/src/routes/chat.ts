@@ -1,11 +1,11 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { rastrearPergunta, type CallbacksDaPergunta } from '@hero/agent';
+import { criarMetricsCallback, rastrearPergunta, type CallbacksDaPergunta } from '@hero/agent';
 import { chatRequestSchema, type ChatEvent } from '@hero/contracts';
 import { criarTradutorDeEventos, formatarEventoSse, type GraphChunk } from './chat-event.js';
 
 /**
- * Só o que a rota usa do grafo: o método stream em modo 'updates', com os callbacks do trace da
- * pergunta. O grafo compilado do LangGraph encaixa aqui sem adaptação, e o teste passa um fake sem
+ * Só o que a rota usa do grafo: o método stream em modo 'updates', com os callbacks da pergunta (o
+ * trace da Langfuse e as métricas). O grafo compilado do LangGraph encaixa aqui sem adaptação, e o teste passa um fake sem
  * LLM nem Postgres.
  */
 export interface GraphLike {
@@ -61,9 +61,11 @@ const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { getGraph }
         // Dentro do try: se a construção do grafo falhar (variável em falta, por exemplo), o
         // cliente recebe o evento de erro como qualquer outra falha do grafo.
         const graph = await getGraph();
+        // As métricas somam-se aos callbacks da Langfuse aqui, no call site, e o LangGraph leva os
+        // dois até cada nó. Ver criarMetricsCallback.
         const chunks = await graph.stream(
           { question: pedido.question },
-          { streamMode: 'updates', callbacks },
+          { streamMode: 'updates', callbacks: [...callbacks, criarMetricsCallback()] },
         );
         let respostaFinal: string | null = null;
         for await (const chunk of chunks) {
