@@ -1,4 +1,5 @@
 import type { RetrievedDoc } from '@hero/agent';
+import type { ChatEvent, DocumentoResumido } from '@hero/contracts';
 
 /**
  * O que cada nó devolve ao estado. Em streamMode 'updates', o grafo emite um chunk por nó
@@ -12,18 +13,8 @@ export interface GraphChunk {
   answer?: { finalAnswer: string };
 }
 
-/** Um documento como o cliente o vê: quem é e quão perto ficou, sem o texto inteiro. */
-export type DocumentoResumido =
-  | { origem: 'cvm'; ticker: string; companyName: string; period: string; distance: number }
-  | { origem: 'web'; title: string; sourceUrl: string; distance: number };
-
-/** Os eventos SSE de /api/chat. O campo `type` diz qual é, para o cliente fazer um switch. */
-export type ChatEvent =
-  | { type: 'retrieve'; documents: DocumentoResumido[] }
-  | { type: 'grade'; sufficient: boolean; missingAspects: string[]; iterations: number }
-  | { type: 'webSearch' }
-  | { type: 'answer'; answer: string }
-  | { type: 'error'; message: string };
+// O formato dos eventos (ChatEvent, DocumentoResumido) é contrato com o frontend: vive em
+// @hero/contracts. Aqui fica só a tradução dos chunks do grafo para esse formato.
 
 function resumirDocumento(doc: RetrievedDoc): DocumentoResumido {
   if (doc.origem === 'cvm') {

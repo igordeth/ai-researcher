@@ -1,11 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { chatRequestSchema } from '@hero/contracts';
-import {
-  criarTradutorDeEventos,
-  formatarEventoSse,
-  type ChatEvent,
-  type GraphChunk,
-} from './chat-event.js';
+import { chatRequestSchema, type ChatEvent } from '@hero/contracts';
+import { criarTradutorDeEventos, formatarEventoSse, type GraphChunk } from './chat-event.js';
 
 /**
  * Só o que a rota usa do grafo: o método stream em modo 'updates'. O grafo compilado do LangGraph

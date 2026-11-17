@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { DocumentoCvm, DocumentoWeb } from '@hero/agent';
+import type { ChatEvent } from '@hero/contracts';
 
 import { build } from '../app.js';
-import type { ChatEvent, GraphChunk } from './chat-event.js';
+import type { GraphChunk } from './chat-event.js';
 import type { GraphLike } from './chat.js';
 
 const documentoCvm: DocumentoCvm = {
