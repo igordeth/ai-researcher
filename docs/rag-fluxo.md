@@ -265,7 +265,7 @@ Quatro decisões, cada uma com um motivo:
 
 **4. `null` explícito, nunca `undefined`.** Num upsert, `undefined` significa "não mexa nesta coluna", e o valor antigo ficaria. O comparativo YoY ausente vira `null` para ser **apagado** de verdade.
 
-**O cliente de embeddings é injetável** ([embeddings.ts](../packages/agent/src/seed/embeddings.ts)). `criarEmbeddings()` cria o cliente real; o `semear` aceita outro por parâmetro. O modo DEMO 🔜 vai passar um fake, sem rede e sem credencial.
+**O cliente de embeddings é injetável** ([embeddings.ts](../packages/agent/src/seed/embeddings.ts)). O `semear` usa `criarEmbeddingsReal()`, que ignora o `DEMO`, e aceita outro cliente por parâmetro no teste. O grafo usa `criarEmbeddings()`, que no modo DEMO devolve vetores de zeros: o seed nunca grava esses vetores no índice.
 
 ---
 

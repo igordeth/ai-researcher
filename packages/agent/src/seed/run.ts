@@ -5,7 +5,7 @@ import { sql } from 'drizzle-orm';
 
 import { db, pool } from '../db/client.js';
 import { documentos } from '../db/schema.js';
-import { criarEmbeddings } from './embeddings.js';
+import { criarEmbeddingsReal } from './embeddings.js';
 import { emLotes } from './lotes.js';
 import { lerDocumentos } from './read-documentos.js';
 import { paraLinha } from './to-row.js';
@@ -27,13 +27,15 @@ export interface EmbeddingsEmLote {
 
 export interface OpcoesSeed {
   dir?: string;
-  // Injetável: o modo DEMO passa um fake no lugar do cliente real.
+  // Injetável para o teste passar um fake. Fora dele, sempre o cliente real.
   embeddings?: EmbeddingsEmLote;
 }
 
 export async function semear({
   dir = DOCUMENTOS_DIR,
-  embeddings = criarEmbeddings(),
+  // criarEmbeddingsReal, e não criarEmbeddings: com DEMO=true, este devolveria vetores de zeros, e
+  // o seed gravá-los-ia no índice. O seed nunca roda em modo demo.
+  embeddings = criarEmbeddingsReal(),
 }: OpcoesSeed = {}): Promise<number> {
   const itens = lerDocumentos(dir);
 

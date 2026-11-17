@@ -1,3 +1,6 @@
+import { criarBuscarDemo } from './demo/buscar-demo.js';
+import { criarAnswerLlmDemo, criarGradeLlmDemo } from './demo/llm-demo.js';
+import { modoDemoAtivo } from './demo/modo-demo.js';
 import { buildGraph } from './graph.js';
 import { criarAnswerLlm, criarGradeLlm } from './llm/clientes.js';
 import { criarSearchProvider } from './search/index.js';
@@ -25,11 +28,33 @@ export function memoizarPromessa<T>(construir: () => Promise<T>): () => Promise<
 }
 
 /**
+ * O grafo do modo DEMO: o mesmo buildGraph, com fixtures no lugar de cada dependência externa.
+ * Sem Postgres, sem Vertex AI e sem busca na web: não exige DATABASE_URL nem MODEL_*, e responde
+ * sempre a RESPOSTA_DEMO sobre a Vale 3T25. O grade é sempre suficiente, por isso o caminho é
+ * retrieve → grade → answer, e o webSearch nunca corre.
+ */
+function montarGrafoDemo(): ResearchGraph {
+  return buildGraph({
+    embeddings: criarEmbeddings(),
+    buscar: criarBuscarDemo(),
+    gradeLlm: criarGradeLlmDemo(),
+    answerLlm: criarAnswerLlmDemo(),
+    searchProvider: criarSearchProvider(),
+    buscarPagina: criarBuscarPagina(),
+    // Nada é gravado: no demo os vetores são zeros, e uma página gravada com eles na
+    // documentos_web estragaria as buscas reais seguintes.
+    gravarPagina: async () => undefined,
+  });
+}
+
+/**
  * Monta o grafo com as dependências reais: Postgres, Vertex AI (embeddings, grade e answer) e a
- * busca na web (Serper, ou as fixtures com DEMO=true). Cada cliente vem da sua fábrica, que lê a
- * própria variável de ambiente e falha com mensagem clara se ela faltar.
+ * busca na web (Serper). Cada cliente vem da sua fábrica, que lê a própria variável de ambiente e
+ * falha com mensagem clara se ela faltar. Com DEMO=true, monta o grafo do demo.
  */
 async function montarGrafoReal(): Promise<ResearchGraph> {
+  if (modoDemoAtivo()) return montarGrafoDemo();
+
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL não definida. Ver .env.example.');
 
   const embeddings = criarEmbeddings();

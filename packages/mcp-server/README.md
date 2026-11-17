@@ -25,8 +25,9 @@ noutro diretório. O `--env-file-if-exists` carrega o `.env` da raiz:
 claude mcp add ai-researcher -- node --env-file-if-exists=/caminho/para/ai-researcher/.env /caminho/para/ai-researcher/packages/mcp-server/dist/stdio.js
 ```
 
-Para gravar a demo sem depender do Serper, ponha `DEMO=true` no `.env`: só a busca na web passa a
-usar fixtures; embeddings, grade e answer continuam na Vertex AI.
+Para correr sem rede nem credencial, ponha `DEMO=true` no `.env`: o grafo inteiro passa a usar
+fixtures (sem Vertex AI, Serper nem Postgres), e a tool responde sempre o mesmo trecho sobre a Vale
+3T25.
 
 **No stdio, o stdout é o canal do protocolo.** Nenhum código deste processo pode escrever no stdout
 (`console.log`): qualquer linha a mais corrompe a conversa com o cliente. Logs vão para o stderr.
