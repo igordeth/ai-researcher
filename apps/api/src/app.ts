@@ -3,6 +3,7 @@ import { mcpHttpPlugin, type GetGraph as GetMcpGraph } from '@hero/mcp-server';
 import { tratarErro } from './error-handler.js';
 import chatRoute, { type GetGraph as GetChatGraph } from './routes/chat.js';
 import healthRoute from './routes/health.js';
+import metricsRoute, { type RegistroDeMetricas } from './routes/metrics.js';
 import { checkDatabase as defaultCheckDatabase } from './db.js';
 
 export interface BuildOptions {
@@ -12,12 +13,15 @@ export interface BuildOptions {
   // pool do Postgres e o circuit breaker da busca), quem chama passa a mesma função memoizada.
   getChatGraph?: GetChatGraph;
   getMcpGraph?: GetMcpGraph;
+  // O registry que o GET /api/metrics expõe. Sem ele, a rota não é registada.
+  registroMetricas?: RegistroDeMetricas;
 }
 
 export function build({
   checkDatabase = defaultCheckDatabase,
   getChatGraph,
   getMcpGraph,
+  registroMetricas,
 }: BuildOptions = {}) {
   const app = Fastify({ logger: true });
 
@@ -35,6 +39,9 @@ export function build({
         // Gateway MCP para o Angular, na mesma porta e atrás do mesmo proxy /api que o /chat: sem
         // CORS. Sem hostsPermitidos: atrás do proxy, o Host muda com o ambiente.
         api.register(mcpHttpPlugin, { prefix: '/mcp', getGraph: getMcpGraph });
+      }
+      if (registroMetricas) {
+        api.register(metricsRoute, { registro: registroMetricas });
       }
     },
     { prefix: '/api' },

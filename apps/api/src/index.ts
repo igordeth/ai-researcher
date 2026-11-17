@@ -1,4 +1,4 @@
-import { obterGrafoReal, registrarTracingLangfuse } from '@hero/agent';
+import { obterGrafoReal, registrarTracingLangfuse, registroMetricas } from '@hero/agent';
 import { build } from './app.js';
 
 // Antes de o servidor aceitar pedidos: o primeiro /chat já tem para onde mandar o trace. Sem as
@@ -11,7 +11,12 @@ if (!encerrarTracing) {
 // A mesma função nas duas rotas, e não uma por rota: obterGrafoReal é memoizada, então o /chat e o
 // /mcp recebem a mesma instância do grafo, com um só pool do Postgres, um só cliente da Vertex AI
 // e um só circuit breaker da busca. Nada é construído aqui: o grafo só nasce no primeiro pedido.
-const app = build({ getChatGraph: obterGrafoReal, getMcpGraph: obterGrafoReal });
+// O registroMetricas é o mesmo onde o callback de métricas das duas rotas conta os tokens e o custo.
+const app = build({
+  getChatGraph: obterGrafoReal,
+  getMcpGraph: obterGrafoReal,
+  registroMetricas,
+});
 
 app.listen({ port: Number(process.env.PORT ?? 3000), host: '0.0.0.0' }).catch((error) => {
   app.log.error(error);
