@@ -1,0 +1,228 @@
+// Medidas do protótipo (docs/design/prototype/ai-researcher-chat.dc.html); cores só por token.
+// Regra de domínio: concluído não é verde, interrompido não é vermelho. Ciano é a única cor de
+// estado (ver a skill frontend-design).
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 16px;
+  // border-box: os 300px do protótipo incluem o padding e a borda.
+  box-sizing: border-box;
+  width: 300px;
+  padding: 24px 18px;
+  overflow-y: auto;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+
+  // Abaixo de 900px, o painel sai da lateral e fica em largura total, entre o disclaimer e a
+  // conversa, com todas as etapas visíveis.
+  @media (max-width: 899px) {
+    order: -1;
+    width: auto;
+    max-height: 40vh;
+    border-left: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+.cabecalho__titulo {
+  margin: 0;
+  // --cyan-dim como texto só sobre --surface, e só em label curta em caixa alta (4,65:1).
+  color: var(--cyan-dim);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cabecalho__descricao {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.aviso-web {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--cyan-tint);
+  border: 1px solid var(--cyan-dim);
+  border-radius: var(--radius-panel);
+  color: var(--cyan);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.aviso-web__icone {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.vazio {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rodada {
+  margin: 4px 0 12px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.etapa {
+  display: flex;
+  gap: 10px;
+}
+
+.etapa__marcador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.etapa__circulo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+
+  .etapa[data-estado='running'] & {
+    background: var(--cyan-tint);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  .etapa[data-estado='done'] & {
+    border-color: var(--cyan-dim);
+    color: var(--cyan);
+  }
+
+  // Interrompido: neutro, com o "!" em --text, sem cor de alarme.
+  .etapa[data-estado='interrupted'] & {
+    color: var(--text);
+  }
+
+  // O halo marca o fallback para a web, em execução ou já usado.
+  .etapa[data-no='webSearch']:not([data-estado='interrupted']) & {
+    box-shadow: 0 0 0 3px var(--cyan-tint);
+  }
+}
+
+.etapa__spinner {
+  animation: girar 0.9s linear infinite;
+
+  // Com movimento reduzido, o arco para e vira um círculo estático em --cyan.
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+
+    circle {
+      stroke-dasharray: none;
+    }
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.etapa__conector {
+  flex: 1;
+  width: 1px;
+  min-height: 22px;
+  margin: 4px 0;
+  background: var(--border);
+
+  // A última etapa não liga a nada.
+  .etapa:last-child & {
+    display: none;
+  }
+}
+
+.etapa__corpo {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 16px;
+
+  .etapa:last-child & {
+    padding-bottom: 0;
+  }
+}
+
+.etapa__linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.etapa__nome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+// O traço comum dos quatro ícones de nó, aqui uma vez em vez de repetido em cada svg.
+.etapa__icone {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--text-muted);
+}
+
+.etapa__tag {
+  padding: 2px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  .etapa[data-estado='running'] & {
+    background: var(--cyan-tint);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+}
+
+.etapa__descricao {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.etapa__duracao {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

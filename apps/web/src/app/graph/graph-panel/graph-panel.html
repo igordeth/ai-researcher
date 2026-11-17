@@ -1,0 +1,119 @@
+<div class="cabecalho">
+  <h2 class="cabecalho__titulo" id="pipeline-titulo">Pipeline de raciocínio</h2>
+  <p class="cabecalho__descricao">
+    Etapas executadas antes de cada resposta — busca, avaliação de contexto e, quando necessário,
+    complemento na web.
+  </p>
+</div>
+
+@if (usouWeb()) {
+<p class="aviso-web">
+  <svg
+    class="aviso-web__icone"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="8"></circle>
+    <path d="M4 12h16M12 4c2.5 2.2 2.5 13.8 0 16M12 4c-2.5 2.2-2.5 13.8 0 16"></path>
+  </svg>
+  Contexto local insuficiente neste turno — a etapa Search buscou complemento na web.
+</p>
+} @if (etapas().length === 0) {
+<p class="vazio">As etapas aparecem aqui quando você enviar uma pergunta.</p>
+}
+
+<!-- aria-live: o leitor de tela anuncia cada etapa nova e cada mudança de estado. -->
+<ol class="timeline" aria-label="Etapas do grafo" aria-live="polite">
+  @for (etapa of etapas(); track $index) { @if (etapa.opensRound) {
+  <li class="rodada">{{ etapa.round }}ª rodada</li>
+  }
+  <li class="etapa" [attr.data-estado]="etapa.status" [attr.data-no]="etapa.node">
+    <div class="etapa__marcador">
+      <span class="etapa__circulo" aria-hidden="true">
+        @switch (etapa.status) { @case ('running') {
+        <svg class="etapa__spinner" width="13" height="13" viewBox="0 0 24 24" fill="none">
+          <circle
+            cx="12"
+            cy="12"
+            r="8"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-dasharray="28 50"
+          ></circle>
+        </svg>
+        } @case ('done') {
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="4,12.5 9.5,18 20,5"></polyline>
+        </svg>
+        } @case ('interrupted') {
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <line x1="12" y1="6" x2="12" y2="14"></line>
+          <circle cx="12" cy="18.5" r="1" fill="currentColor" stroke="none"></circle>
+        </svg>
+        } }
+      </span>
+      <span class="etapa__conector" aria-hidden="true"></span>
+    </div>
+
+    <div class="etapa__corpo">
+      <div class="etapa__linha">
+        <span class="etapa__nome">
+          <!-- Um svg inteiro por nó: os traços ficam no mesmo elemento svg que os declara. -->
+          @switch (etapa.node) { @case ('retrieve') {
+          <svg class="etapa__icone" viewBox="0 0 24 24" aria-hidden="true">
+            <ellipse cx="12" cy="5" rx="7" ry="2.5"></ellipse>
+            <path d="M5 5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"></path>
+            <path d="M5 11v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"></path>
+          </svg>
+          } @case ('grade') {
+          <svg class="etapa__icone" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16M4 12h10M4 18h6"></path>
+            <path d="M16 15.5l2 2 4-4"></path>
+          </svg>
+          } @case ('webSearch') {
+          <svg class="etapa__icone" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"></circle>
+            <path d="M4 12h16M12 4c2.5 2.2 2.5 13.8 0 16M12 4c-2.5 2.2-2.5 13.8 0 16"></path>
+          </svg>
+          } @case ('answer') {
+          <svg class="etapa__icone" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h16v11H9l-5 4z"></path>
+          </svg>
+          } } {{ etapa.label }}
+        </span>
+        <span class="etapa__tag">{{ etapa.tag }}</span>
+      </div>
+      <p class="etapa__descricao">
+        {{ etapa.description }} @if (etapa.duration) {
+        <span class="etapa__duracao">· {{ etapa.duration }}</span>
+        }
+      </p>
+    </div>
+  </li>
+  }
+</ol>

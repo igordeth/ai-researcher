@@ -54,6 +54,26 @@
   color: var(--cyan-dim);
 }
 
+.area {
+  display: flex;
+  flex: 1;
+  // min-height: 0 deixa a área encolher abaixo do conteúdo: quem rola são as mensagens e o
+  // painel, cada um por si, e não a página inteira.
+  min-height: 0;
+
+  @media (max-width: 899px) {
+    flex-direction: column;
+  }
+}
+
+.conversa {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
 .mensagens {
   display: flex;
   flex: 1;

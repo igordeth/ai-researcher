@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 
+import { GraphPanel } from '../graph/graph-panel/graph-panel';
 import { ChatStore, type AssistantMessage, type UserMessage } from '../state/chat-store';
 import { parseAnswer, type ParsedAnswer } from '../state/citation';
 
@@ -13,7 +14,7 @@ type MensagemNaTela = UserMessage | AssistantNaTela;
  */
 @Component({
   selector: 'app-chat',
-  imports: [],
+  imports: [GraphPanel],
   templateUrl: './chat.html',
   styleUrl: './chat.scss',
 })
