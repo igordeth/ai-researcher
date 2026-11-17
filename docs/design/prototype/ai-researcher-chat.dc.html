@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700;800&display=swap">
+  <style>
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    body { margin: 0; }
+    a { color: var(--cyan); }
+    a:hover { color: #7cffff; }
+  </style>
+</helmet>
+<div style="--bg:#080909; --surface:#141517; --surface-2:#1c1e21; --border:#2b2e32; --text:#f2f3f4; --text-muted:#95999e; --cyan:#14fefe; --cyan-dim:#0d8f8f; --cyan-tint:rgba(20,254,254,0.1); --lime:#a3ea1f; --font-display:'Anton',sans-serif; --font-body:'Poppins',sans-serif; height: 100vh; width: 100%; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-body); overflow: hidden;">
+
+  <nav style="display: flex; align-items: center; gap: 10px; padding: 14px 24px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0;">
+    <span style="font-family: var(--font-display); font-size: 20px; letter-spacing: 0.02em; color: var(--text);">AI RESEARCHER</span>
+    <span style="border: 1px solid var(--cyan-dim); color: var(--cyan); font-family: var(--font-body); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; margin-left: 10px;">B3 · CVM</span>
+    <button type="button" style="margin-left: auto; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-family: var(--font-body); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 14px; border-radius: 6px; cursor: pointer;" style-hover="{{ ghostBtnHover }}" onClick="{{ onResetChat }}">Nova conversa</button>
+  </nav>
+
+  <div style="display: flex; align-items: center; gap: 10px; padding: 9px 24px; background: var(--surface-2); border-bottom: 1px solid var(--border); flex-shrink: 0;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-dim)" stroke-width="1.6" style="flex-shrink: 0;"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="11" x2="12" y2="16.5"></line><circle cx="12" cy="7.5" r="0.9" fill="var(--cyan-dim)" stroke="none"></circle></svg>
+    <span style="font-size: 12.5px; color: var(--text-muted);">Este assistente apresenta informações públicas, não recomendação de investimento.</span>
+  </div>
+
+  <div style="flex: 1; display: flex; overflow: hidden; flex-direction: {{ mainRowDirection }};">
+
+    <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0;">
+
+      <div style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+
+        <sc-for list="{{ displayMessages }}" as="msg" hint-placeholder-count="2">
+
+          <sc-if value="{{ msg.isUser }}" hint-placeholder-val="{{ true }}">
+            <div style="{{ msg.userBubbleStyle }}">{{ msg.text }}</div>
+          </sc-if>
+
+          <sc-if value="{{ msg.isAssistant }}" hint-placeholder-val="{{ false }}">
+            <div style="align-self: flex-start; max-width: 82%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                <span style="width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--cyan-dim); color: var(--cyan); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+                </span>
+                <span style="font-family: var(--font-body); font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; color: var(--text-muted);">AI RESEARCHER</span>
+                <sc-if value="{{ msg.done }}" hint-placeholder-val="{{ false }}">
+                  <button type="button" aria-label="Reproduzir novamente" style="margin-left: auto; width: 26px; height: 26px; border-radius: 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="{{ ghostBtnHover }}" onClick="{{ msg.onReplay }}">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.9-6.2"></path><polyline points="20 4 20 9 15 9"></polyline></svg>
+                  </button>
+                </sc-if>
+              </div>
+              <p style="margin: 0; font-size: 15px; line-height: 1.65; color: var(--text);">
+                <sc-for list="{{ msg.visibleTokens }}" as="tok" hint-placeholder-count="0">
+                  <sc-if value="{{ tok.isWord }}" hint-placeholder-val="{{ false }}"><span>{{ tok.text }}</span></sc-if>
+                  <sc-if value="{{ tok.isNum }}" hint-placeholder-val="{{ false }}"><span style="font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text);">{{ tok.text }}</span></sc-if>
+                  <sc-if value="{{ tok.isCite }}" hint-placeholder-val="{{ false }}">
+                    <button type="button" style="{{ tok.style }}" style-hover="{{ tok.hoverStyle }}" onClick="{{ tok.onClick }}">{{ tok.label }}</button>
+                  </sc-if>
+                </sc-for>
+                <sc-if value="{{ msg.showCursor }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: inline-block; width: 2px; height: 15px; background: var(--cyan); vertical-align: -2px; margin-left: 2px; animation: blink 0.9s step-end infinite;"></span>
+                </sc-if>
+              </p>
+
+              <sc-if value="{{ msg.hasOpenCitation }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top: 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; position: relative;">
+                  <button type="button" aria-label="Fechar" style="position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 6px; background: transparent; border: none; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer;" onClick="{{ msg.onCloseCitation }}">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
+                  </button>
+                  <div style="font-family: var(--font-body); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px;">Fonte da citação {{ msg.openCitation.tagLabel }}</div>
+                  <div style="font-size: 13.5px; font-weight: 600; color: var(--text);">{{ msg.openCitation.label }}</div>
+                  <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">{{ msg.openCitation.detail }}</div>
+                  <div style="display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap;">
+                    <div>
+                      <div style="font-size: 11px; color: var(--text-muted);">Data-base</div>
+                      <div style="font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text);">{{ msg.openCitation.basis }}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11px; color: var(--text-muted);">Origem</div>
+                      <div style="font-size: 13.5px; color: var(--text);">{{ msg.openCitation.source }}</div>
+                    </div>
+                  </div>
+                  <a href="#" onClick="{{ msg.onOpenDoc }}" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; font-weight: 600; text-decoration: none;">
+                    Abrir documento original
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+                  </a>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+        </sc-for>
+
+      </div>
+
+      <div style="display: flex; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--border); flex-shrink: 0;">
+        <input style="flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 11px 14px; font-family: var(--font-body); font-size: 14.5px; outline: none;" placeholder="Pergunte sobre indicadores financeiros de uma empresa da B3…" value="{{ inputVal }}" onChange="{{ onInputChange }}" onKeyDown="{{ onInputKeyDown }}"></input>
+        <button type="button" style="{{ sendBtnStyle }}" disabled="{{ sendDisabled }}" onClick="{{ onSend }}">Enviar</button>
+      </div>
+    </div>
+
+    <sc-if value="{{ showGraphPanel }}" hint-placeholder-val="{{ true }}">
+      <aside style="{{ sidebarStyle }}">
+        <div>
+          <div style="font-family: var(--font-body); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan-dim);">Pipeline de raciocínio</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.5;">Etapas executadas antes de cada resposta — busca, avaliação de contexto e, quando necessário, complemento na web.</div>
+        </div>
+
+        <sc-if value="{{ fallbackActive }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; gap: 8px; align-items: flex-start; background: var(--cyan-tint); border: 1px solid var(--cyan-dim); border-radius: 8px; padding: 10px 12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16M12 4c2.5 2.2 2.5 13.8 0 16M12 4c-2.5 2.2-2.5 13.8 0 16"></path></svg>
+            <span style="font-size: 12.5px; color: var(--cyan); line-height: 1.4;">Contexto local insuficiente neste turno — a etapa Search buscou complemento na web.</span>
+          </div>
+        </sc-if>
+
+        <div style="display: flex; flex-direction: column;">
+
+          <div style="display: flex; gap: 10px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="{{ retrieveCircleStyle }}">
+                <sc-if value="{{ retrieveIsPending }}" hint-placeholder-val="{{ true }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"></circle></svg></sc-if>
+                <sc-if value="{{ retrieveIsRunning }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="animation: spin 0.9s linear infinite;"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="28 50"></circle></svg></sc-if>
+                <sc-if value="{{ retrieveIsDone }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,12.5 9.5,18 20,5"></polyline></svg></sc-if>
+              </div>
+              <div style="width: 1px; flex: 1; min-height: 22px; background: var(--border); margin: 4px 0;"></div>
+            </div>
+            <div style="flex: 1; padding-bottom: 16px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <span style="display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--text);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><ellipse cx="12" cy="5" rx="7" ry="2.5"></ellipse><path d="M5 5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"></path><path d="M5 11v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"></path></svg>
+                  Retrieve
+                </span>
+                <span style="{{ retrieveTagStyle }}">{{ retrieveTagText }}</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Busca vetorial na base de demonstrações financeiras (CVM)</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="{{ gradeCircleStyle }}">
+                <sc-if value="{{ gradeIsPending }}" hint-placeholder-val="{{ true }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"></circle></svg></sc-if>
+                <sc-if value="{{ gradeIsRunning }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="animation: spin 0.9s linear infinite;"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="28 50"></circle></svg></sc-if>
+                <sc-if value="{{ gradeIsDone }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,12.5 9.5,18 20,5"></polyline></svg></sc-if>
+              </div>
+              <div style="width: 1px; flex: 1; min-height: 22px; background: var(--border); margin: 4px 0;"></div>
+            </div>
+            <div style="flex: 1; padding-bottom: 16px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <span style="display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--text);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><path d="M4 6h16M4 12h10M4 18h6"></path><path d="M16 15.5l2 2 4-4"></path></svg>
+                  Grade
+                </span>
+                <span style="{{ gradeTagStyle }}">{{ gradeTagText }}</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Avalia a relevância do contexto recuperado</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="{{ searchCircleStyle }}">
+                <sc-if value="{{ searchIsPending }}" hint-placeholder-val="{{ true }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"></circle></svg></sc-if>
+                <sc-if value="{{ searchIsRunning }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="animation: spin 0.9s linear infinite;"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="28 50"></circle></svg></sc-if>
+                <sc-if value="{{ searchIsDone }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,12.5 9.5,18 20,5"></polyline></svg></sc-if>
+              </div>
+              <div style="width: 1px; flex: 1; min-height: 22px; background: var(--border); margin: 4px 0;"></div>
+            </div>
+            <div style="flex: 1; padding-bottom: 16px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <span style="display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--text);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16M12 4c2.5 2.2 2.5 13.8 0 16M12 4c-2.5 2.2-2.5 13.8 0 16"></path></svg>
+                  Search
+                </span>
+                <span style="{{ searchTagStyle }}">{{ searchTagText }}</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Busca web complementar, usada quando o contexto local é insuficiente</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="{{ answerCircleStyle }}">
+                <sc-if value="{{ answerIsPending }}" hint-placeholder-val="{{ true }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"></circle></svg></sc-if>
+                <sc-if value="{{ answerIsRunning }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="animation: spin 0.9s linear infinite;"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="28 50"></circle></svg></sc-if>
+                <sc-if value="{{ answerIsDone }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,12.5 9.5,18 20,5"></polyline></svg></sc-if>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <span style="display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--text);">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+                  Answer
+                </span>
+                <span style="{{ answerTagStyle }}">{{ answerTagText }}</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Gera a resposta e associa cada trecho à sua fonte</div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280, &quot;height&quot;: 800}, &quot;showGraphPanel&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Painel do grafo&quot;}, &quot;sidebarPosition&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;right&quot;, &quot;left&quot;], &quot;default&quot;: &quot;right&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Painel do grafo&quot;}, &quot;streamSpeedMs&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 70, &quot;min&quot;: 30, &quot;max&quot;: 160, &quot;step&quot;: 10, &quot;unit&quot;: &quot;ms&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Streaming&quot;}}">
+const CITATIONS = {
+  1: { label: 'CVM — ITR Petrobras S.A.', detail: 'Formulário de Informações Trimestrais, notas explicativas', basis: '30/06/2025', source: 'Base local (RAG)', tagLabel: '[1]' },
+  2: { label: 'CVM — ITR Petrobras S.A.', detail: 'Formulário de Informações Trimestrais, demonstração de resultado', basis: '30/06/2025', source: 'Base local (RAG)', tagLabel: '[2]' },
+  3: { label: 'Release de resultados do 2T25', detail: 'Petrobras — Relações com Investidores', basis: '08/08/2025', source: 'Busca web (contexto local insuficiente)', tagLabel: '[3]' },
+};
+
+const ANSWER_SEGMENTS = [
+  { type: 'text', text: 'A receita líquida da Petrobras no 2T25 foi de ' },
+  { type: 'num', text: 'R$ 122,4 bilhões' },
+  { type: 'text', text: ', uma redução de 3,2% em relação ao trimestre anterior. ' },
+  { type: 'cite', idx: 1 },
+  { type: 'text', text: ' O EBITDA ajustado no mesmo período somou ' },
+  { type: 'num', text: 'R$ 65,8 bilhões' },
+  { type: 'text', text: ', com margem de 53,8%. ' },
+  { type: 'cite', idx: 2 },
+  { type: 'text', text: ' A base local não continha o fluxo de caixa livre do trimestre; o valor de ' },
+  { type: 'num', text: 'R$ 41,2 bilhões' },
+  { type: 'text', text: ' abaixo foi obtido por busca complementar na web.' },
+  { type: 'cite', idx: 3 },
+];
+
+function buildTokens(segments) {
+  const tokens = [];
+  segments.forEach((seg) => {
+    if (seg.type === 'text') {
+      seg.text.split(/(\s+)/).filter((s) => s.length > 0).forEach((w) => tokens.push({ type: 'word', text: w }));
+    } else if (seg.type === 'num') {
+      tokens.push({ type: 'num', text: seg.text });
+    } else {
+      tokens.push({ type: 'cite', idx: seg.idx });
+    }
+  });
+  return tokens;
+}
+const ANSWER_TOKENS = buildTokens(ANSWER_SEGMENTS);
+const STEP_KEYS = ['retrieve', 'grade', 'search', 'answer'];
+
+class Component extends DCLogic {
+  state = {
+    messages: [
+      { id: 1, role: 'user', text: 'Qual foi a receita líquida da Petrobras no último trimestre reportado, e como ficou o EBITDA?' },
+      { id: 2, role: 'assistant', revealed: 0, done: false, openCiteIdx: null },
+    ],
+    pipeline: { retrieve: 'pending', grade: 'pending', search: 'pending', answer: 'pending' },
+    inputVal: '',
+    nextId: 3,
+  };
+
+  timers = [];
+
+  componentDidMount() {
+    this.timers.push(setTimeout(() => this.runPipeline(2), 300));
+  }
+
+  componentWillUnmount() {
+    this.timers.forEach(clearTimeout);
+    if (this.revealTimer) clearInterval(this.revealTimer);
+  }
+
+  clearTimers() {
+    this.timers.forEach(clearTimeout);
+    this.timers = [];
+    if (this.revealTimer) { clearInterval(this.revealTimer); this.revealTimer = null; }
+  }
+
+  setStep(key, status) {
+    this.setState((s) => ({ pipeline: { ...s.pipeline, [key]: status } }));
+  }
+
+  runPipeline(assistantId) {
+    this.clearTimers();
+    this.setState({ pipeline: { retrieve: 'pending', grade: 'pending', search: 'pending', answer: 'pending' } });
+    this.setState((s) => ({ messages: s.messages.map((m) => (m.id === assistantId ? { ...m, revealed: 0, done: false } : m)) }));
+
+    this.timers.push(setTimeout(() => this.setStep('retrieve', 'running'), 50));
+    this.timers.push(setTimeout(() => { this.setStep('retrieve', 'done'); this.setStep('grade', 'running'); }, 900));
+    this.timers.push(setTimeout(() => { this.setStep('grade', 'done'); this.setStep('search', 'running'); }, 1700));
+    this.timers.push(setTimeout(() => {
+      this.setStep('search', 'done');
+      this.setStep('answer', 'running');
+      this.startReveal(assistantId);
+    }, 2600));
+  }
+
+  startReveal(assistantId) {
+    const speed = this.props.streamSpeedMs ?? 70;
+    this.revealTimer = setInterval(() => {
+      this.setState((s) => {
+        const msg = s.messages.find((m) => m.id === assistantId);
+        if (!msg) return s;
+        const next = Math.min(msg.revealed + 1, ANSWER_TOKENS.length);
+        const doneNow = next >= ANSWER_TOKENS.length;
+        if (doneNow) { clearInterval(this.revealTimer); this.revealTimer = null; this.setStep('answer', 'done'); }
+        return { messages: s.messages.map((m) => (m.id === assistantId ? { ...m, revealed: next, done: doneNow } : m)) };
+      });
+    }, speed);
+  }
+
+  onSend = () => {
+    const text = this.state.inputVal.trim();
+    if (!text) return;
+    const userId = this.state.nextId;
+    const assistantId = this.state.nextId + 1;
+    this.setState((s) => ({
+      messages: [...s.messages, { id: userId, role: 'user', text }, { id: assistantId, role: 'assistant', revealed: 0, done: false, openCiteIdx: null }],
+      nextId: s.nextId + 2,
+      inputVal: '',
+    }));
+    this.timers.push(setTimeout(() => this.runPipeline(assistantId), 200));
+  };
+
+  onInputChange = (e) => this.setState({ inputVal: e.target.value });
+  onInputKeyDown = (e) => { if (e.key === 'Enter') { e.preventDefault(); this.onSend(); } };
+
+  onResetChat = () => {
+    this.clearTimers();
+    this.setState({
+      messages: [
+        { id: 1, role: 'user', text: 'Qual foi a receita líquida da Petrobras no último trimestre reportado, e como ficou o EBITDA?' },
+        { id: 2, role: 'assistant', revealed: 0, done: false, openCiteIdx: null },
+      ],
+      pipeline: { retrieve: 'pending', grade: 'pending', search: 'pending', answer: 'pending' },
+      inputVal: '',
+      nextId: 3,
+    });
+    this.timers.push(setTimeout(() => this.runPipeline(2), 300));
+  };
+
+  toggleCitation(msgId, idx) {
+    this.setState((s) => ({
+      messages: s.messages.map((m) => (m.id === msgId ? { ...m, openCiteIdx: m.openCiteIdx === idx ? null : idx } : m)),
+    }));
+  }
+
+  stepStyle(status, isFallback) {
+    if (status === 'running') {
+      return {
+        circle: { width: 26, height: 26, borderRadius: '50%', border: '1px solid var(--cyan)', color: 'var(--cyan)', background: 'var(--cyan-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: isFallback ? '0 0 0 3px var(--cyan-tint)' : 'none' },
+        tag: { fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 700, padding: '2px 9px', borderRadius: '999px', border: '1px solid var(--cyan)', color: 'var(--cyan)', background: 'var(--cyan-tint)', whiteSpace: 'nowrap' },
+        text: isFallback ? 'Fallback ativo' : 'Em execução',
+      };
+    }
+    if (status === 'done') {
+      return {
+        circle: { width: 26, height: 26, borderRadius: '50%', border: '1px solid var(--cyan-dim)', color: 'var(--cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: isFallback ? '0 0 0 3px var(--cyan-tint)' : 'none' },
+        tag: { fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 700, padding: '2px 9px', borderRadius: '999px', border: '1px solid var(--border)', color: 'var(--text-muted)', whiteSpace: 'nowrap' },
+        text: isFallback ? 'Fallback usado' : 'Concluído',
+      };
+    }
+    return {
+      circle: { width: 26, height: 26, borderRadius: '50%', border: '1px solid var(--border)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+      tag: { fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 700, padding: '2px 9px', borderRadius: '999px', border: '1px solid var(--border)', color: 'var(--text-muted)', whiteSpace: 'nowrap' },
+      text: 'Pendente',
+    };
+  }
+
+  renderVals() {
+    const { messages, pipeline, inputVal } = this.state;
+    const showGraphPanel = this.props.showGraphPanel ?? true;
+    const position = this.props.sidebarPosition ?? 'right';
+    const canSend = !!inputVal.trim();
+
+    const displayMessages = messages.map((m) => {
+      if (m.role === 'user') {
+        return {
+          key: m.id,
+          isUser: true,
+          isAssistant: false,
+          text: m.text,
+          userBubbleStyle: { alignSelf: 'flex-end', maxWidth: '62%', background: 'var(--surface-2)', border: '1px solid var(--border)', padding: '12px 16px', borderRadius: '10px', fontSize: '15px', lineHeight: 1.5, color: 'var(--text)' },
+        };
+      }
+      const visibleTokens = ANSWER_TOKENS.slice(0, m.revealed).map((t, i) => {
+        if (t.type === 'word') return { key: m.id + '-' + i, isWord: true, isNum: false, isCite: false, text: t.text };
+        if (t.type === 'num') return { key: m.id + '-' + i, isWord: false, isNum: true, isCite: false, text: t.text };
+        const open = m.openCiteIdx === t.idx;
+        return {
+          key: m.id + '-' + i,
+          isWord: false,
+          isNum: false,
+          isCite: true,
+          label: '[' + t.idx + ']',
+          onClick: () => this.toggleCitation(m.id, t.idx),
+          style: {
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '18px', height: '18px', padding: '0 5px',
+            borderRadius: '999px', border: open ? '1px solid var(--cyan)' : '1px solid var(--cyan-dim)',
+            background: open ? 'var(--cyan)' : 'transparent', color: open ? '#04201f' : 'var(--cyan)',
+            fontSize: '11px', fontWeight: 700, verticalAlign: '2px', margin: '0 2px', cursor: 'pointer', lineHeight: 1, fontFamily: 'var(--font-body)',
+          },
+          hoverStyle: { background: 'var(--cyan-tint)' },
+        };
+      });
+      const openCiteIdx = m.openCiteIdx;
+      return {
+        key: m.id,
+        isUser: false,
+        isAssistant: true,
+        done: m.done,
+        showCursor: !m.done,
+        visibleTokens,
+        onReplay: () => this.runPipeline(m.id),
+        hasOpenCitation: !!openCiteIdx,
+        openCitation: openCiteIdx ? CITATIONS[openCiteIdx] : null,
+        onCloseCitation: () => this.toggleCitation(m.id, openCiteIdx),
+        onOpenDoc: (e) => e.preventDefault(),
+      };
+    });
+
+    const vals = {
+      displayMessages, inputVal, sendDisabled: !canSend, onSend: this.onSend, onInputChange: this.onInputChange, onInputKeyDown: this.onInputKeyDown, onResetChat: this.onResetChat, showGraphPanel,
+      mainRowDirection: position === 'left' ? 'row-reverse' : 'row',
+      ghostBtnHover: { borderColor: 'var(--cyan-dim)', color: 'var(--cyan)' },
+      sendBtnStyle: {
+        background: canSend ? 'var(--lime)' : 'var(--surface-2)', color: canSend ? '#0a1400' : 'var(--text-muted)',
+        border: 'none', borderRadius: '6px', padding: '11px 22px', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13.5px',
+        letterSpacing: '0.02em', textTransform: 'uppercase', cursor: canSend ? 'pointer' : 'default',
+      },
+    };
+
+    vals.sidebarStyle = {
+      width: '300px', minWidth: '300px', borderLeft: position === 'left' ? 'none' : '1px solid var(--border)', borderRight: position === 'left' ? '1px solid var(--border)' : 'none',
+      background: 'var(--surface)', padding: '24px 18px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px',
+    };
+
+    STEP_KEYS.forEach((key) => {
+      const status = pipeline[key];
+      const s = this.stepStyle(status, key === 'search');
+      vals[key + 'IsPending'] = status === 'pending';
+      vals[key + 'IsRunning'] = status === 'running';
+      vals[key + 'IsDone'] = status === 'done';
+      vals[key + 'CircleStyle'] = s.circle;
+      vals[key + 'TagStyle'] = s.tag;
+      vals[key + 'TagText'] = s.text;
+    });
+    vals.fallbackActive = pipeline.search !== 'pending';
+
+    return vals;
+  }
+}
+
+</script>
+</body>
+</html>
