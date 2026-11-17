@@ -18,3 +18,5 @@ export {
 // o que o /metrics vai expor.
 export { criarMetricsCallback } from './metricas/metrics-callback.js';
 export { registroMetricas } from './metricas/registro.js';
+// O consumo de tokens do dia, somado pelo mesmo callback: a rota /chat confere-o contra o orçamento.
+export { consumoDiarioDeTokens } from './metricas/consumo-diario.js';

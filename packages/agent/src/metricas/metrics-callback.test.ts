@@ -7,6 +7,7 @@ import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import type { Counter } from 'prom-client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { consumoDiarioDeTokens } from './consumo-diario.js';
 import { criarMetricsCallback } from './metrics-callback.js';
 import { llmCostUsdTotal, llmTokensTotal, registroMetricas } from './registro.js';
 
@@ -95,6 +96,7 @@ describe('criarMetricsCallback', () => {
       new ChatFake('gemini-3.5-flash-lite', USO_GRADE),
       new ChatFake('gemini-3.6-flash', USO_ANSWER),
     );
+    const consumoAntes = consumoDiarioDeTokens.tokensHoje();
 
     await grafo.invoke({ pergunta: 'Receita da Vale?' }, { callbacks: [criarMetricsCallback()] });
     // O LangChain corre os callbacks em segundo plano: esperar por eles antes de ler os contadores.
@@ -115,6 +117,9 @@ describe('criarMetricsCallback', () => {
     expect(await valorDe(llmTokensTotal, { ...answer, kind: 'reasoning' })).toBe(200);
     // 2000 × 0,75 + 1000 × 0,075 + (400 + 200) × 3,75, por milhão.
     expect(await valorDe(llmCostUsdTotal, answer)).toBeCloseTo(0.003825, 12);
+
+    // O orçamento diário recebe os mesmos tokens que o contador: 1050 do grade e 3600 do answer.
+    expect(consumoDiarioDeTokens.tokensHoje() - consumoAntes).toBe(4650);
   });
 
   it('soma-se aos outros callbacks da chamada, sem tirar o lugar a nenhum', async () => {

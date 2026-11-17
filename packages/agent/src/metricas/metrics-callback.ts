@@ -3,6 +3,7 @@ import type { Serialized } from '@langchain/core/load/serializable';
 import { AIMessage, type BaseMessage, type UsageMetadata } from '@langchain/core/messages';
 import type { LLMResult } from '@langchain/core/outputs';
 
+import { consumoDiarioDeTokens } from './consumo-diario.js';
 import { PRECOS_USD_POR_MILHAO } from './precos.js';
 import { llmCostUsdTotal, llmTokensTotal } from './registro.js';
 
@@ -40,7 +41,7 @@ function avisarModeloSemPreco(modelo: string): void {
   );
 }
 
-/** Soma os tokens e o custo de uma chamada aos contadores. */
+/** Soma os tokens e o custo de uma chamada aos contadores, e os tokens ao consumo do dia. */
 function registrarUso({ node, model }: ChamadaLlm, uso: UsageMetadata): void {
   // Na convenção do LangChain, input_tokens já inclui o cache_read e output_tokens já inclui o
   // reasoning (a Vertex AI soma o thoughtsTokenCount à saída). Tirar as partes do todo dá quatro
@@ -56,6 +57,8 @@ function registrarUso({ node, model }: ChamadaLlm, uso: UsageMetadata): void {
   for (const [kind, quantidade] of Object.entries(tokens)) {
     if (quantidade > 0) llmTokensTotal.inc({ node, model, kind }, quantidade);
   }
+  // O orçamento diário soma os mesmos números, aqui: uma contagem só, lida por dois lados.
+  consumoDiarioDeTokens.somar(tokens.input + tokens.cache_read + tokens.output + tokens.reasoning);
 
   const preco = PRECOS_USD_POR_MILHAO[model];
   if (!preco) {

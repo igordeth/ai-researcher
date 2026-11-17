@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { criarMetricsCallback, rastrearPergunta, type CallbacksDaPergunta } from '@hero/agent';
 import { chatRequestSchema, type ChatEvent } from '@hero/contracts';
+import { OrcamentoDiarioEsgotado } from '../erros.js';
 import { criarTradutorDeEventos, formatarEventoSse, type GraphChunk } from './chat-event.js';
 
 /**
@@ -22,15 +23,40 @@ export interface GraphLike {
  */
 export type GetGraph = () => Promise<GraphLike>;
 
+/**
+ * Só o que a rota usa do consumo de tokens do dia. O consumoDiarioDeTokens do @hero/agent encaixa
+ * aqui, e o teste passa um fake com o número que quiser.
+ */
+export interface ConsumoDeTokens {
+  tokensHoje(): number;
+  segundosAteZerar(): number;
+}
+
 export interface ChatRouteOptions {
   getGraph: GetGraph;
+  consumo: ConsumoDeTokens;
+  /** O orçamento diário de tokens, para o processo inteiro (todos os clientes juntos). */
+  limiteDiario: number;
 }
 
 // Mensagem fixa para o cliente: o erro real (de rede, do LLM, da base) só vai para o log.
 const MENSAGEM_ERRO_GRAFO = 'Não foi possível concluir a resposta. Tente novamente.';
 
-const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (app, { getGraph }) => {
+const chatRoute: FastifyPluginAsync<ChatRouteOptions> = async (
+  app,
+  { getGraph, consumo, limiteDiario },
+) => {
   app.post('/chat', async (request, reply) => {
+    // O orçamento é conferido antes de tudo, e sobretudo antes do hijack: depois de o status 200
+    // sair, um 429 já não é possível. Uma pergunta que começa abaixo do limite vai até ao fim,
+    // mesmo que o ultrapasse: o limite trava a próxima, e nunca corta uma resposta a meio.
+    const tokensHoje = consumo.tokensHoje();
+    if (tokensHoje >= limiteDiario) {
+      // O error handler mantém os headers já postos: o cliente sabe quando o orçamento renova.
+      reply.header('Retry-After', consumo.segundosAteZerar());
+      throw new OrcamentoDiarioEsgotado(tokensHoje, limiteDiario);
+    }
+
     // Corpo inválido lança ZodError, e o error handler central responde 400 em problem+json.
     const pedido = chatRequestSchema.parse(request.body);
 

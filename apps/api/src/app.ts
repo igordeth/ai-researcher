@@ -1,7 +1,10 @@
+import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
+import { consumoDiarioDeTokens } from '@hero/agent';
 import { mcpHttpPlugin, type GetGraph as GetMcpGraph } from '@hero/mcp-server';
 import { tratarErro } from './error-handler.js';
-import chatRoute, { type GetGraph as GetChatGraph } from './routes/chat.js';
+import { limiteDiarioDeTokens, opcoesRateLimit } from './limites.js';
+import chatRoute, { type ConsumoDeTokens, type GetGraph as GetChatGraph } from './routes/chat.js';
 import healthRoute from './routes/health.js';
 import metricsRoute, { type RegistroDeMetricas } from './routes/metrics.js';
 import { checkDatabase as defaultCheckDatabase } from './db.js';
@@ -15,6 +18,9 @@ export interface BuildOptions {
   getMcpGraph?: GetMcpGraph;
   // O registry que o GET /api/metrics expõe. Sem ele, a rota não é registada.
   registroMetricas?: RegistroDeMetricas;
+  // De onde o /chat lê os tokens gastos hoje, para os comparar com o orçamento diário. O padrão é
+  // o do processo, que o callback de métricas soma; o teste passa um fake.
+  consumoDeTokens?: ConsumoDeTokens;
 }
 
 export function build({
@@ -22,6 +28,7 @@ export function build({
   getChatGraph,
   getMcpGraph,
   registroMetricas,
+  consumoDeTokens = consumoDiarioDeTokens,
 }: BuildOptions = {}) {
   const app = Fastify({ logger: true });
 
@@ -29,11 +36,20 @@ export function build({
   // todas: as rotas lançam, e é aqui que o erro vira status e application/problem+json.
   app.setErrorHandler(tratarErro);
 
+  // Rate limiting em todas as rotas registadas depois dele. As opções são lidas do ambiente agora,
+  // a cada build(), e não no import deste ficheiro.
+  app.register(rateLimit, opcoesRateLimit());
+  const limiteDiario = limiteDiarioDeTokens();
+
   app.register(
     async (api) => {
       api.register(healthRoute, { checkDatabase });
       if (getChatGraph) {
-        api.register(chatRoute, { getGraph: getChatGraph });
+        api.register(chatRoute, {
+          getGraph: getChatGraph,
+          consumo: consumoDeTokens,
+          limiteDiario,
+        });
       }
       if (getMcpGraph) {
         // Gateway MCP para o Angular, na mesma porta e atrás do mesmo proxy /api que o /chat: sem

@@ -1,10 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentoCvm, DocumentoWeb } from '@hero/agent';
 import type { ChatEvent } from '@hero/contracts';
 
 import { build } from '../app.js';
 import type { GraphChunk } from './chat-event.js';
-import type { GraphLike } from './chat.js';
+import type { ConsumoDeTokens, GraphLike } from './chat.js';
 
 const documentoCvm: DocumentoCvm = {
   origem: 'cvm',
@@ -232,5 +232,73 @@ describe('POST /api/chat', () => {
     });
     expect(response.json().detail).toContain('question');
     expect(stream).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /api/chat com o orçamento diário de tokens', () => {
+  /** O consumo do dia num número fixo, e a virada daqui a uma hora. */
+  function consumoFake(tokensHoje: number): ConsumoDeTokens {
+    return { tokensHoje: () => tokensHoje, segundosAteZerar: () => 3600 };
+  }
+
+  function appComOrcamento(graph: GraphLike, tokensHoje: number) {
+    return build({
+      checkDatabase: async () => true,
+      getChatGraph: async () => graph,
+      consumoDeTokens: consumoFake(tokensHoje),
+    });
+  }
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('esgotado: 429 em problem+json, com Retry-After até à virada, sem byte de SSE nem grafo', async () => {
+    vi.stubEnv('DAILY_TOKEN_BUDGET', '5000');
+    const { graph, stream } = grafoFake(LACO_COMPLETO);
+
+    const response = await appComOrcamento(graph, 5000).inject({
+      method: 'POST',
+      url: '/api/chat',
+      payload: { question: 'Receita da Vale?' },
+    });
+
+    expect(response.statusCode).toBe(429);
+    expect(response.headers['content-type']).toContain('application/problem+json');
+    expect(response.headers['retry-after']).toBe('3600');
+    expect(response.json()).toMatchObject({
+      type: '/problemas/orcamento-diario-esgotado',
+      status: 429,
+    });
+    // Nem o consumo nem o limite saem para o cliente.
+    expect(response.body).not.toContain('5000');
+    expect(response.body).not.toContain('data:');
+    expect(stream).not.toHaveBeenCalled();
+  });
+
+  it('abaixo do limite, a pergunta corre como sempre', async () => {
+    vi.stubEnv('DAILY_TOKEN_BUDGET', '5000');
+    const { graph, stream } = grafoFake(LACO_COMPLETO);
+
+    const response = await appComOrcamento(graph, 4999).inject({
+      method: 'POST',
+      url: '/api/chat',
+      payload: { question: 'Receita da Vale?' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-type']).toBe('text/event-stream; charset=utf-8');
+    expect(stream).toHaveBeenCalledOnce();
+  });
+
+  it('o limite vem de DAILY_TOKEN_BUDGET, lido a cada build()', async () => {
+    const { graph } = grafoFake(LACO_COMPLETO);
+    const pedido = { method: 'POST' as const, url: '/api/chat', payload: { question: 'q' } };
+
+    vi.stubEnv('DAILY_TOKEN_BUDGET', '100');
+    expect((await appComOrcamento(graph, 100).inject(pedido)).statusCode).toBe(429);
+
+    vi.stubEnv('DAILY_TOKEN_BUDGET', '101');
+    expect((await appComOrcamento(graph, 100).inject(pedido)).statusCode).toBe(200);
   });
 });

@@ -23,6 +23,10 @@ export const PROBLEM_CONTENT_TYPE = 'application/problem+json';
 export const PROBLEM_TYPES = {
   pedidoInvalido: '/problemas/pedido-invalido',
   buscaIndisponivel: '/problemas/busca-indisponivel',
+  // 429 do rate limiting: pedidos demais do mesmo cliente na janela de tempo.
+  limiteDePedidos: '/problemas/limite-de-pedidos',
+  // 429 do orçamento diário de tokens: o limite do dia já foi gasto, por todos os clientes juntos.
+  orcamentoDiarioEsgotado: '/problemas/orcamento-diario-esgotado',
   erroInterno: '/problemas/erro-interno',
 } as const;
 

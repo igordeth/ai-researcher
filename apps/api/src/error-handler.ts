@@ -7,6 +7,7 @@ import {
   ZodError,
   type ProblemDetails,
 } from '@hero/contracts';
+import { LimiteDePedidosExcedido, OrcamentoDiarioEsgotado } from './erros.js';
 
 // Erro do próprio Fastify por culpa do pedido (JSON malformado, content-type não suportado, corpo
 // grande demais): já traz o status 4xx certo, e a mensagem descreve o erro do cliente.
@@ -40,6 +41,25 @@ export function paraProblema(erro: unknown): ProblemDetails {
       title: 'Busca na web indisponível',
       status: 503,
       detail: 'A busca na web está temporariamente indisponível. Tente novamente em instantes.',
+    };
+  }
+
+  if (erro instanceof LimiteDePedidosExcedido) {
+    return {
+      type: PROBLEM_TYPES.limiteDePedidos,
+      title: 'Limite de pedidos excedido',
+      status: 429,
+      detail: `Muitos pedidos em pouco tempo. Tente novamente em ${erro.segundosAteLiberar} s.`,
+    };
+  }
+
+  if (erro instanceof OrcamentoDiarioEsgotado) {
+    return {
+      type: PROBLEM_TYPES.orcamentoDiarioEsgotado,
+      title: 'Orçamento diário esgotado',
+      status: 429,
+      // Sem os números: o consumo e o limite ficam no log, e não com quem pergunta.
+      detail: 'O assistente atingiu o limite de uso de hoje. Tente novamente amanhã.',
     };
   }
 
