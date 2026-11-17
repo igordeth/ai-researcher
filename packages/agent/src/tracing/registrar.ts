@@ -6,7 +6,7 @@ import {
 } from '@langfuse/otel';
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 
-import { mascararDadosPessoais } from './mascarar-dados.js';
+import { mascararValor } from './mascarar-dados.js';
 
 // O filtro por defeito da Langfuse (spans da Langfuse e de LLM), menos o __start__ do LangGraph:
 // um passo interno de 0 ms em todas as perguntas, que só polui a árvore do trace.
@@ -47,7 +47,7 @@ export function registrarTracingLangfuse(
     spanProcessors: [
       new LangfuseSpanProcessor({
         exporter,
-        mask: ({ data }) => mascararDadosPessoais(data),
+        mask: ({ data }) => mascararValor(data),
         shouldExportSpan: exportarSpan,
       }),
     ],

@@ -96,7 +96,9 @@ describe('com as chaves da Langfuse', () => {
     });
 
     await rastrearPergunta('Sou a@b.com. Receita da Vale?', 'chat', (callbacks) =>
-      grafoFalso.invoke({}, { callbacks }),
+      // Metadata com número e texto, como o langgraph_step que o LangGraph põe em cada nó: a
+      // máscara recebe-os já descodificados, e não só strings.
+      grafoFalso.invoke({}, { callbacks, metadata: { passo: 1, contato: 'x@y.com' } }),
     );
     // O shutdown esvazia a fila do processor para o exportador.
     await encerrar?.();
@@ -110,6 +112,12 @@ describe('com as chaves da Langfuse', () => {
     expect(raiz?.attributes['langfuse.observation.output']).toBe('R$ 56,7 bi.');
     expect(grafo?.parentSpanContext?.spanId).toBe(raiz?.spanContext().spanId);
     expect(tracingAtivo()).toBe(false);
+
+    // Nenhum campo trocado inteiro pela Langfuse por a máscara ter falhado, e nenhum e-mail cru.
+    const atributos = JSON.stringify(exportador.spans.map((span) => span.attributes));
+    expect(atributos).not.toContain('fully masked');
+    expect(atributos).not.toContain('x@y.com');
+    expect(atributos).toContain('[EMAIL]');
   });
 
   it('recusa registar duas vezes no mesmo processo', () => {
